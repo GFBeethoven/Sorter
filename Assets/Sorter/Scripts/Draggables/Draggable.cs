@@ -1,13 +1,16 @@
 using System;
 using UnityEngine;
+using Zenject;
 
 [RequireComponent(typeof(Collider))]
 public class Draggable : MonoBehaviour, IDraggable
 {
     public const string LayerMask = "Draggable";
 
+    [Inject] private SignalBus _signalBus;
+
     private Transform _transform;
-    protected Transform CachedTransform
+    public Transform CachedTransform
     {
         get
         {
@@ -37,6 +40,32 @@ public class Draggable : MonoBehaviour, IDraggable
     private Vector3 _pointerDeltaPosition;
 
     private IDraggableDropZone _owner;
+    protected IDraggableDropZone Owner => _owner;
+
+    private bool _isDragging;
+    public bool IsDragging => _isDragging;
+
+    private bool _canDrag;
+    public bool CanDrag
+    {
+        get
+        {
+            return _canDrag;
+        }
+
+        set
+        {
+            _canDrag = value;   
+
+            if (!_canDrag)
+            {
+                if (IsDragging)
+                {
+                    _signalBus.Fire<OnCannotDragDraggable>(new OnCannotDragDraggable(this));
+                }
+            }
+        }
+    }
 
     private void OnDestroy()
     {
@@ -76,6 +105,8 @@ public class Draggable : MonoBehaviour, IDraggable
 
     void IDraggable.DragStart(Vector3 pointerPosition)
     {
+        _isDragging = true;
+
         OnDragStart(pointerPosition);
     }
 
@@ -86,6 +117,8 @@ public class Draggable : MonoBehaviour, IDraggable
 
     void IDraggable.DragEnd(Vector3 pointerPosition)
     {
+        _isDragging = false;
+
         OnDragEnd(pointerPosition);
     }
 

@@ -6,7 +6,8 @@ using UnityEngine;
 
 public abstract class FSMState<T> : IState<T> where T : StateEnterData
 {
-    protected FSM _fsm;
+    private FSM _fsm;
+    protected FSM Fsm => _fsm;
 
     private List<CoroutineHandle> _disposableOnExitCoroutines;
 
@@ -29,7 +30,7 @@ public abstract class FSMState<T> : IState<T> where T : StateEnterData
     {
         if (coroutine == null) return;
 
-        if (_fsm.IsCurrentState(this) == false) return;
+        if (Fsm.IsCurrentState(this) == false) return;
 
         _disposableOnExitCoroutines.Add(Timing.RunCoroutine(coroutine));
     }

@@ -3,6 +3,7 @@ using UnityEngine;
 using UnityEngine.InputSystem;
 using UnityEngine.InputSystem.Controls;
 using UnityEngine.InputSystem.EnhancedTouch;
+using UnityEngine.UIElements;
 using Zenject;
 
 public class DraggablesDispatcher
@@ -10,18 +11,30 @@ public class DraggablesDispatcher
     private readonly static int DraggablesLayerMask = LayerMask.GetMask(Draggable.LayerMask);
     private readonly static int DraggableDropZonesLayerMask = LayerMask.GetMask(DraggableDropZone<Draggable>.LayerMask);
 
-    [Inject] private Camera _camera;
+    private Camera _camera;
+
+    private SignalBus _signalBus;
 
     private Dictionary<int, IDraggable> _draggedObjects = new();
-    private HashSet<IDraggable> _activeDraggables = new();
+    private Dictionary<IDraggable, int> _activeDraggables = new();
+    private Dictionary<int, Vector2> _pointerPositions = new();
 
     private bool _isLaunched = false;
+
+    public DraggablesDispatcher(Camera camera, SignalBus signalBus)
+    {
+        _camera = camera;
+
+        _signalBus = signalBus;
+    }
 
     public void Launch()
     {
         if (_isLaunched) return;
 
         TouchSimulation.Enable();
+
+        _signalBus.Subscribe<OnCannotDragDraggable>(OnCannotDrag);
 
         _isLaunched = true;
     }
@@ -31,6 +44,8 @@ public class DraggablesDispatcher
         if (!_isLaunched) return;
 
         TouchSimulation.Disable();
+
+        _signalBus.TryUnsubscribe<OnCannotDragDraggable>(OnCannotDrag);
 
         _isLaunched = false;
     }
@@ -73,6 +88,19 @@ public class DraggablesDispatcher
         }
     }
 
+    private void OnCannotDrag(OnCannotDragDraggable signal)
+    {
+        if (signal.Draggable == null) return;
+
+        IDraggable draggable = signal.Draggable;
+
+        if (_activeDraggables.TryGetValue(draggable, out int pointerId) && 
+            _pointerPositions.TryGetValue(pointerId, out Vector2 pointerPos))
+        {
+            EndDrag(pointerId, pointerPos);
+        }
+    }
+
     private void TryBeginDrag(int pointerId, Vector2 screenPos)
     {
         if (_draggedObjects.ContainsKey(pointerId))
@@ -84,13 +112,15 @@ public class DraggablesDispatcher
         {
             var draggable = hit.collider.GetComponent<IDraggable>();
 
-            if (_activeDraggables.Contains(draggable) == false)
+            if (_activeDraggables.ContainsKey(draggable) == false)
             {
                 draggable.DragStart(hit.point);
 
                 _draggedObjects[pointerId] = draggable;
 
-                _activeDraggables.Add(draggable);
+                _activeDraggables.Add(draggable, pointerId);
+
+                _pointerPositions[pointerId] = screenPos;
             }
         }
     }
@@ -102,6 +132,8 @@ public class DraggablesDispatcher
             Vector3 worldPos = _camera.ScreenToWorldPoint(new Vector3(screenPos.x, screenPos.y, 0.0f));
 
             draggable.Drag(worldPos);
+
+            _pointerPositions[pointerId] = screenPos;
         }
     }
 
@@ -109,6 +141,8 @@ public class DraggablesDispatcher
     {
         if (_draggedObjects.TryGetValue(pointerId, out var draggable))
         {
+            _pointerPositions[pointerId] = screenPos;
+
             Vector3 worldPos = _camera.ScreenToWorldPoint(new Vector3(screenPos.x, screenPos.y, 0.0f));
 
             draggable.DragEnd(worldPos);
@@ -124,5 +158,7 @@ public class DraggablesDispatcher
         _draggedObjects.Remove(pointerId);
 
         _activeDraggables.Remove(draggable);
+
+        _pointerPositions.Remove(pointerId);
     }
 }

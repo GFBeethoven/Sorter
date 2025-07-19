@@ -49,15 +49,20 @@ public abstract class DraggableDropZone<T> : MonoBehaviour, IDraggableDropZone w
         return _draggables[index];
     }
 
-    protected virtual void OnAddItem() { }
+    protected virtual void OnAddItem(T newDraggable) { }
 
-    protected virtual void OnRemoveItem() { }
+    protected virtual void OnRemoveItem(T oldDraggable) { }
 
     protected virtual void OnItemDragStart(T draggable) { }
 
     protected virtual void OnItemDrag(T draggable) { }
 
     protected virtual void OnItemDragEnd(T draggable) { }
+
+    protected virtual bool IsNewItemValid(T draggable)
+    {
+        return true;
+    }
 
     private void OnSomeDraggableDragStart(OnStartDragDraggable signal)
     {
@@ -85,12 +90,13 @@ public abstract class DraggableDropZone<T> : MonoBehaviour, IDraggableDropZone w
 
     bool IDraggableDropZone.TryAddItem(IDraggableReadOnly draggable)
     {
-        if (draggable is T monoDraggable && !_draggablesHashSet.Contains(monoDraggable))
+        if (draggable is T monoDraggable && !_draggablesHashSet.Contains(monoDraggable) &&
+            IsNewItemValid(monoDraggable))
         {
             _draggables.Add(monoDraggable);
             _draggablesHashSet.Add(monoDraggable);
 
-            OnAddItem();
+            OnAddItem(monoDraggable);
 
             return true;
         }
@@ -105,7 +111,7 @@ public abstract class DraggableDropZone<T> : MonoBehaviour, IDraggableDropZone w
             _draggables.Remove(monoDraggable);
             _draggablesHashSet.Remove(monoDraggable);
 
-            OnRemoveItem();
+            OnRemoveItem(monoDraggable);
         }
     }
 }

@@ -29,3 +29,13 @@ public struct OnEndDragDraggable
         Draggable = draggable;
     }
 }
+
+public struct OnCannotDragDraggable
+{
+    public Draggable Draggable;
+
+    public OnCannotDragDraggable(Draggable draggable)
+    {
+        Draggable = draggable;
+    }
+}
