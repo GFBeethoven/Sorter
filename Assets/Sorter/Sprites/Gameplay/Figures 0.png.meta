@@ -1,0 +1,468 @@
+fileFormatVersion: 2
+guid: 5e6bb3aa251885144ac52025bfafbdd2
+TextureImporter:
+  internalIDToNameTable:
+  - first:
+      213: 6567643909898561956
+    second: candy-game-icons-cartoon-vector-ui-sweets-set_0
+  - first:
+      213: -7809255595451793699
+    second: candy-game-icons-cartoon-vector-ui-sweets-set_1
+  - first:
+      213: 7234827631822873295
+    second: candy-game-icons-cartoon-vector-ui-sweets-set_2
+  - first:
+      213: -8031990398889205028
+    second: candy-game-icons-cartoon-vector-ui-sweets-set_3
+  - first:
+      213: -4624548336624419105
+    second: candy-game-icons-cartoon-vector-ui-sweets-set_4
+  - first:
+      213: 8975615912629758068
+    second: candy-game-icons-cartoon-vector-ui-sweets-set_5
+  - first:
+      213: 6101329424544516438
+    second: candy-game-icons-cartoon-vector-ui-sweets-set_6
+  - first:
+      213: 3079377393464604511
+    second: candy-game-icons-cartoon-vector-ui-sweets-set_7
+  - first:
+      213: -7782648353870544210
+    second: candy-game-icons-cartoon-vector-ui-sweets-set_8
+  - first:
+      213: 892375372857132294
+    second: candy-game-icons-cartoon-vector-ui-sweets-set_9
+  - first:
+      213: -2362502994303134834
+    second: candy-game-icons-cartoon-vector-ui-sweets-set_10
+  - first:
+      213: 3752730091459466847
+    second: candy-game-icons-cartoon-vector-ui-sweets-set_11
+  externalObjects: {}
+  serializedVersion: 13
+  mipmaps:
+    mipMapMode: 0
+    enableMipMap: 0
+    sRGBTexture: 1
+    linearTexture: 0
+    fadeOut: 0
+    borderMipMap: 0
+    mipMapsPreserveCoverage: 0
+    alphaTestReferenceValue: 0.5
+    mipMapFadeDistanceStart: 1
+    mipMapFadeDistanceEnd: 3
+  bumpmap:
+    convertToNormalMap: 0
+    externalNormalMap: 0
+    heightScale: 0.25
+    normalMapFilter: 0
+    flipGreenChannel: 0
+  isReadable: 0
+  streamingMipmaps: 0
+  streamingMipmapsPriority: 0
+  vTOnly: 0
+  ignoreMipmapLimit: 0
+  grayScaleToAlpha: 0
+  generateCubemap: 6
+  cubemapConvolution: 0
+  seamlessCubemap: 0
+  textureFormat: 1
+  maxTextureSize: 2048
+  textureSettings:
+    serializedVersion: 2
+    filterMode: 1
+    aniso: 1
+    mipBias: 0
+    wrapU: 1
+    wrapV: 1
+    wrapW: 1
+  nPOTScale: 0
+  lightmap: 0
+  compressionQuality: 50
+  spriteMode: 2
+  spriteExtrude: 1
+  spriteMeshType: 1
+  alignment: 0
+  spritePivot: {x: 0.5, y: 0.5}
+  spritePixelsToUnits: 100
+  spriteBorder: {x: 0, y: 0, z: 0, w: 0}
+  spriteGenerateFallbackPhysicsShape: 1
+  alphaUsage: 1
+  alphaIsTransparency: 1
+  spriteTessellationDetail: -1
+  textureType: 8
+  textureShape: 1
+  singleChannelComponent: 0
+  flipbookRows: 1
+  flipbookColumns: 1
+  maxTextureSizeSet: 0
+  compressionQualitySet: 0
+  textureFormatSet: 0
+  ignorePngGamma: 0
+  applyGammaDecoding: 0
+  swizzle: 50462976
+  cookieLightType: 0
+  platformSettings:
+  - serializedVersion: 4
+    buildTarget: DefaultTexturePlatform
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Standalone
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: Android
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: 50
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 1
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: WebGL
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  - serializedVersion: 4
+    buildTarget: iOS
+    maxTextureSize: 2048
+    resizeAlgorithm: 0
+    textureFormat: -1
+    textureCompression: 1
+    compressionQuality: 50
+    crunchedCompression: 0
+    allowsAlphaSplitting: 0
+    overridden: 0
+    ignorePlatformSupport: 0
+    androidETC2FallbackOverride: 0
+    forceMaximumCompressionQuality_BC6H_BC7: 0
+  spriteSheet:
+    serializedVersion: 2
+    sprites:
+    - serializedVersion: 2
+      name: candy-game-icons-cartoon-vector-ui-sweets-set_0
+      rect:
+        serializedVersion: 2
+        x: 88
+        y: 1106
+        width: 393
+        height: 396
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 4a9e2c4d655f42b50800000000000000
+      internalID: 6567643909898561956
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: candy-game-icons-cartoon-vector-ui-sweets-set_1
+      rect:
+        serializedVersion: 2
+        x: 558
+        y: 1107
+        width: 410
+        height: 413
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: dde3dd04963ff9390800000000000000
+      internalID: -7809255595451793699
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: candy-game-icons-cartoon-vector-ui-sweets-set_2
+      rect:
+        serializedVersion: 2
+        x: 1030
+        y: 1110
+        width: 415
+        height: 393
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fc2abfd3665476460800000000000000
+      internalID: 7234827631822873295
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: candy-game-icons-cartoon-vector-ui-sweets-set_3
+      rect:
+        serializedVersion: 2
+        x: 1555
+        y: 1112
+        width: 320
+        height: 407
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: cd26cda9943a88090800000000000000
+      internalID: -8031990398889205028
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: candy-game-icons-cartoon-vector-ui-sweets-set_4
+      rect:
+        serializedVersion: 2
+        x: 97
+        y: 620
+        width: 378
+        height: 353
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: fdeb0ec2acd42dfb0800000000000000
+      internalID: -4624548336624419105
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: candy-game-icons-cartoon-vector-ui-sweets-set_5
+      rect:
+        serializedVersion: 2
+        x: 558
+        y: 640
+        width: 410
+        height: 290
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 478e3a02e1bcf8c70800000000000000
+      internalID: 8975615912629758068
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: candy-game-icons-cartoon-vector-ui-sweets-set_6
+      rect:
+        serializedVersion: 2
+        x: 1036
+        y: 630
+        width: 404
+        height: 351
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 6594d9f09c64ca450800000000000000
+      internalID: 6101329424544516438
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: candy-game-icons-cartoon-vector-ui-sweets-set_7
+      rect:
+        serializedVersion: 2
+        x: 1549
+        y: 605
+        width: 330
+        height: 385
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f5773d29c652cba20800000000000000
+      internalID: 3079377393464604511
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: candy-game-icons-cartoon-vector-ui-sweets-set_8
+      rect:
+        serializedVersion: 2
+        x: 122
+        y: 82
+        width: 315
+        height: 415
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: ea284cf6e8a7ef390800000000000000
+      internalID: -7782648353870544210
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: candy-game-icons-cartoon-vector-ui-sweets-set_9
+      rect:
+        serializedVersion: 2
+        x: 566
+        y: 117
+        width: 394
+        height: 332
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: 605c4717caa526c00800000000000000
+      internalID: 892375372857132294
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: candy-game-icons-cartoon-vector-ui-sweets-set_10
+      rect:
+        serializedVersion: 2
+        x: 1050
+        y: 78
+        width: 380
+        height: 427
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: e83d3c33b04b63fd0800000000000000
+      internalID: -2362502994303134834
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    - serializedVersion: 2
+      name: candy-game-icons-cartoon-vector-ui-sweets-set_11
+      rect:
+        serializedVersion: 2
+        x: 1525
+        y: 93
+        width: 371
+        height: 395
+      alignment: 0
+      pivot: {x: 0, y: 0}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      customData: 
+      outline: []
+      physicsShape: []
+      tessellationDetail: -1
+      bones: []
+      spriteID: f565c57a220641430800000000000000
+      internalID: 3752730091459466847
+      vertices: []
+      indices: 
+      edges: []
+      weights: []
+    outline: []
+    customData: 
+    physicsShape: []
+    bones: []
+    spriteID: 
+    internalID: 0
+    vertices: []
+    indices: 
+    edges: []
+    weights: []
+    secondaryTextures: []
+    spriteCustomMetadata:
+      entries: []
+    nameFileIdTable:
+      candy-game-icons-cartoon-vector-ui-sweets-set_0: 6567643909898561956
+      candy-game-icons-cartoon-vector-ui-sweets-set_1: -7809255595451793699
+      candy-game-icons-cartoon-vector-ui-sweets-set_10: -2362502994303134834
+      candy-game-icons-cartoon-vector-ui-sweets-set_11: 3752730091459466847
+      candy-game-icons-cartoon-vector-ui-sweets-set_2: 7234827631822873295
+      candy-game-icons-cartoon-vector-ui-sweets-set_3: -8031990398889205028
+      candy-game-icons-cartoon-vector-ui-sweets-set_4: -4624548336624419105
+      candy-game-icons-cartoon-vector-ui-sweets-set_5: 8975615912629758068
+      candy-game-icons-cartoon-vector-ui-sweets-set_6: 6101329424544516438
+      candy-game-icons-cartoon-vector-ui-sweets-set_7: 3079377393464604511
+      candy-game-icons-cartoon-vector-ui-sweets-set_8: -7782648353870544210
+      candy-game-icons-cartoon-vector-ui-sweets-set_9: 892375372857132294
+  mipmapLimitGroupName: 
+  pSDRemoveMatte: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
