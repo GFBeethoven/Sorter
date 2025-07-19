@@ -6,48 +6,6 @@ public class Draggable : MonoBehaviour, IDraggable
 {
     public const string LayerMask = "Draggable";
 
-    private Action<IDraggableReadOnly> _onDragStart;
-    event Action<IDraggableReadOnly> IDraggableReadOnly.OnDragStart
-    {
-        add
-        {
-            _onDragStart += value;
-        }
-
-        remove
-        {
-            _onDragStart -= value;
-        }
-    }
-
-    private Action<IDraggableReadOnly> _onDrag;
-    event Action<IDraggableReadOnly> IDraggableReadOnly.OnDrag
-    {
-        add
-        {
-            _onDrag += value;
-        }
-
-        remove
-        {
-            _onDrag -= value;
-        }
-    }
-
-    private Action<IDraggableReadOnly> _onDragEnd;
-    event Action<IDraggableReadOnly> IDraggableReadOnly.OnDragEnd
-    {
-        add
-        {
-            _onDragEnd += value;
-        }
-
-        remove
-        {
-            _onDragEnd -= value;
-        }
-    }
-
     private Transform _transform;
     protected Transform CachedTransform
     {
@@ -85,49 +43,27 @@ public class Draggable : MonoBehaviour, IDraggable
         Dispose();
     }
 
-    public void Dispose()
+    public virtual void Dispose()
     {
         (this as IDraggable).SetOwner(null);
-
-        _onDragStart = null;
-        _onDragEnd = null;
-        _onDrag = null;
     }
 
-    protected virtual void OnDragStartHandler() { }
-
-    protected virtual void OnDragHandler() { }
-
-    protected virtual void OnDragEndHandler() { }
-
-    void IDraggable.DragStart(Vector3 pointerPosition)
+    protected virtual void OnDragStart(Vector3 pointerPosition)
     {
         _pointerDeltaPosition = CachedTransform.position - pointerPosition;
-
-        OnDragStartHandler();
-
-        _onDragStart?.Invoke(this);
     }
 
-    void IDraggable.Drag(Vector3 pointerPosition)
+    protected virtual void OnDrag(Vector3 pointerPosition)
     {
         CachedTransform.position = _pointerDeltaPosition + pointerPosition;
-
-        OnDragHandler();
-
-        _onDrag?.Invoke(this);
     }
 
-    void IDraggable.DragEnd(Vector3 pointerPosition)
+    protected virtual void OnDragEnd(Vector3 pointerPosition)
     {
         CachedTransform.position = _pointerDeltaPosition + pointerPosition;
-
-        OnDragEndHandler();
-
-        _onDragEnd?.Invoke(this);
     }
 
-    void IDraggable.SetOwner(IDraggableDropZone owner)
+    protected virtual void SetOwner(IDraggableDropZone owner)
     {
         if (_owner == owner) return;
 
@@ -137,16 +73,29 @@ public class Draggable : MonoBehaviour, IDraggable
 
         _owner?.TryAddItem(this);
     }
+
+    void IDraggable.DragStart(Vector3 pointerPosition)
+    {
+        OnDragStart(pointerPosition);
+    }
+
+    void IDraggable.Drag(Vector3 pointerPosition)
+    {
+        OnDrag(pointerPosition);
+    }
+
+    void IDraggable.DragEnd(Vector3 pointerPosition)
+    {
+        OnDragEnd(pointerPosition);
+    }
+
+    void IDraggable.SetOwner(IDraggableDropZone owner)
+    {
+        SetOwner(owner);
+    }
 }
 
-public interface IDraggableReadOnly : IDisposable
-{
-    public event Action<IDraggableReadOnly> OnDragStart;
-
-    public event Action<IDraggableReadOnly> OnDrag;
-
-    public event Action<IDraggableReadOnly> OnDragEnd;
-}
+public interface IDraggableReadOnly : IDisposable { }
 
 public interface IDraggable : IDraggableReadOnly
 {

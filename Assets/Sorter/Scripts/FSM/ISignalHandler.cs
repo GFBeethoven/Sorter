@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public interface ISignalHandler<T> where T : Signal
+public interface ISignalHandler
 {
-    public void Handle(T signal);
+    public void Handle(FSMSignalData data);
 }

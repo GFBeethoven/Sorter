@@ -8,7 +8,7 @@ using Zenject;
 public class DraggablesDispatcher
 {
     private readonly static int DraggablesLayerMask = LayerMask.GetMask(Draggable.LayerMask);
-    private readonly static int DraggableDropZonesLayerMask = LayerMask.GetMask(DraggableDropZone.LayerMask);
+    private readonly static int DraggableDropZonesLayerMask = LayerMask.GetMask(DraggableDropZone<Draggable>.LayerMask);
 
     [Inject] private Camera _camera;
 

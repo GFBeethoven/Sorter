@@ -1,16 +1,9 @@
 using UnityEngine;
 
-public class SortingGameplayBelt : MonoBehaviour
+[RequireComponent(typeof(WorldRectTransform))]
+public class SortingGameplayBelt : DraggableDropZone<Draggable>
 {
-    // Start is called once before the first execution of Update after the MonoBehaviour is created
-    void Start()
-    {
-        
-    }
+    [SerializeField] private Belt _belt;
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
+
 }

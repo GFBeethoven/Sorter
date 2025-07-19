@@ -4,13 +4,30 @@ using System;
 using Zenject;
 
 [RequireComponent(typeof(Collider))]
-public abstract class DraggableDropZone : MonoBehaviour, IDraggableDropZone
+public abstract class DraggableDropZone<T> : MonoBehaviour, IDraggableDropZone where T : Draggable
 {
+    [Inject] private SignalBus _signalBus;
+
     public const string LayerMask = "DraggableDropZone";
 
-    private List<Draggable> _draggables = new();
+    private List<T> _draggables = new();
+    private HashSet<T> _draggablesHashSet = new();
 
     public int DraggablesCount => _draggables.Count;
+
+    private void OnEnable()
+    {
+        _signalBus.Subscribe<OnDragDraggable>(OnSomeDraggableDrag);
+        _signalBus.Subscribe<OnStartDragDraggable>(OnSomeDraggableDragStart);
+        _signalBus.Subscribe<OnEndDragDraggable>(OnSomeDraggableDragEnd);
+    }
+
+    private void OnDisable()
+    {
+        _signalBus.TryUnsubscribe<OnDragDraggable>(OnSomeDraggableDrag);
+        _signalBus.TryUnsubscribe<OnStartDragDraggable>(OnSomeDraggableDragStart);
+        _signalBus.TryUnsubscribe<OnEndDragDraggable>(OnSomeDraggableDragEnd);
+    }
 
     public void Dispose()
     {
@@ -18,9 +35,16 @@ public abstract class DraggableDropZone : MonoBehaviour, IDraggableDropZone
         {
             _draggables[i].Dispose();
         }
+
+        _signalBus.TryUnsubscribe<OnDragDraggable>(OnSomeDraggableDrag);
+        _signalBus.TryUnsubscribe<OnStartDragDraggable>(OnSomeDraggableDragStart);
+        _signalBus.TryUnsubscribe<OnEndDragDraggable>(OnSomeDraggableDragEnd);
+
+        _draggables.Clear();
+        _draggablesHashSet.Clear();
     }
 
-    protected Draggable GetItem(int index)
+    protected T GetItem(int index)
     {
         return _draggables[index];
     }
@@ -29,22 +53,42 @@ public abstract class DraggableDropZone : MonoBehaviour, IDraggableDropZone
 
     protected virtual void OnRemoveItem() { }
 
-    protected virtual void OnItemDragStart(Draggable draggable) { }
+    protected virtual void OnItemDragStart(T draggable) { }
 
-    protected virtual void OnItemDrag(Draggable draggable) { }
+    protected virtual void OnItemDrag(T draggable) { }
 
-    protected virtual void OnItemDragEnd(Draggable draggable) { }
+    protected virtual void OnItemDragEnd(T draggable) { }
 
-    protected virtual bool CanAcceptItem(IDraggable draggable)
+    private void OnSomeDraggableDragStart(OnStartDragDraggable signal)
     {
-        return draggable is Draggable;
+        if (signal.Draggable is T draggable && _draggablesHashSet.Contains(draggable))
+        {
+            OnItemDragStart(draggable);
+        }
+    }
+
+    private void OnSomeDraggableDrag(OnDragDraggable signal)
+    {
+        if (signal.Draggable is T draggable && _draggablesHashSet.Contains(draggable))
+        {
+            OnItemDrag(draggable);
+        }
+    }
+
+    private void OnSomeDraggableDragEnd(OnEndDragDraggable signal)
+    {
+        if (signal.Draggable is T draggable && _draggablesHashSet.Contains(draggable))
+        {
+            OnItemDragEnd(draggable);
+        }
     }
 
     bool IDraggableDropZone.TryAddItem(IDraggableReadOnly draggable)
     {
-        if (draggable is Draggable monoDraggable)
+        if (draggable is T monoDraggable && !_draggablesHashSet.Contains(monoDraggable))
         {
             _draggables.Add(monoDraggable);
+            _draggablesHashSet.Add(monoDraggable);
 
             OnAddItem();
 
@@ -56,9 +100,10 @@ public abstract class DraggableDropZone : MonoBehaviour, IDraggableDropZone
 
     void IDraggableDropZone.RemoveItem(IDraggableReadOnly draggable)
     {
-        if (draggable is Draggable monoDraggable)
+        if (draggable is T monoDraggable)
         {
             _draggables.Remove(monoDraggable);
+            _draggablesHashSet.Remove(monoDraggable);
 
             OnRemoveItem();
         }

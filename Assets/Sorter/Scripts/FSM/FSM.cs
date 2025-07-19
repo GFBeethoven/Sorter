@@ -2,9 +2,12 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Zenject;
 
 public class FSM
 {
+    [Inject] private SignalBus _signalBus;
+
     public event Action OnStateChanged;
 
     private IState _currentState = null;
@@ -13,6 +16,8 @@ public class FSM
 
     public FSM(IState[] allStates, StateEnterData initEnterData)
     {
+        _signalBus.Subscribe<FSMSignal>(Signal);
+
         _states = allStates;
 
         for (int i = 0; i < allStates.Length; i++)
@@ -28,13 +33,13 @@ public class FSM
         return _currentState == state;
     }
 
-    public void Signal<T>(T signal) where T : Signal
+    private void Signal(FSMSignal signal)
     {
-        if (_currentState == null) return;
+        if (_currentState == null || signal.Data == null) return;
 
-        if (_currentState is ISignalHandler<T> handler)
+        if (_currentState is ISignalHandler handler)
         {
-            handler.Handle(signal);           
+            handler.Handle(signal.Data);           
         }
     }
 

@@ -7,6 +7,8 @@ public class SharedGameObjectsInstaller : MonoInstaller
 
     public override void InstallBindings()
     {
+        SignalBusInstaller.Install(Container);
+
         var shared = Instantiate(_sharedObjects, null);
         DontDestroyOnLoad(shared);
 
