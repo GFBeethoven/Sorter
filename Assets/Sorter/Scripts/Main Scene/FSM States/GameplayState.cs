@@ -4,7 +4,7 @@ public class GameplayState : FSMState<GameplayState.EnterData>, ISignalHandler
 {
     private SortingGameplay _sortingGameplay;
 
-    public GameplayState(SortingGameplay sortingGameplay) : base(null)
+    public GameplayState(SortingGameplay sortingGameplay, SortingGameplayView view) : base(view)
     {
         _sortingGameplay = sortingGameplay;
     }

@@ -1,3 +1,5 @@
+using MEC;
+using System.Collections.Generic;
 using UnityEngine;
 using Zenject;
 
@@ -8,9 +10,15 @@ public class SortingGameplay
     private ReactiveProperty<int> _health;
     private ReactiveProperty<int> _score;
 
+    private List<SortingGameplayBelt> _belts;
+    private List<SortingGameplayFigure> _figures;
+    private List<SortingGameplayFigureHole> _holes;
+
     private bool _isLaunched;
 
     private LaunchParameters _parameters;
+
+    private CoroutineHandle _figureSpawnCoroutine;
 
     public SortingGameplay(SignalBus signalBus)
     {
@@ -18,6 +26,10 @@ public class SortingGameplay
 
         _health = new ReactiveProperty<int>(0);
         _score = new ReactiveProperty<int>(0);
+
+        _belts = new();
+        _figures = new();
+        _holes = new();
     }
 
     public void Launch(LaunchParameters parameters)
@@ -36,6 +48,13 @@ public class SortingGameplay
 
         _signalBus.Subscribe<SortingGameplayFigureSorted>(FigureSorted);
         _signalBus.Subscribe<SortingGameplayFigureDestroyed>(FigureDestroyed);
+
+        if (_figureSpawnCoroutine.IsValid)
+        {
+            Timing.KillCoroutines(_figureSpawnCoroutine);
+        }
+
+        _figureSpawnCoroutine = Timing.RunCoroutine(_FigureSpawnProcess());
     }
 
     public void Stop()
@@ -49,6 +68,39 @@ public class SortingGameplay
 
         _signalBus.TryUnsubscribe<SortingGameplayFigureSorted>(FigureSorted);
         _signalBus.TryUnsubscribe<SortingGameplayFigureDestroyed>(FigureDestroyed);
+
+        for (int i = 0; i < _figures.Count; i++)
+        {
+            ReleaseFigure(_figures[i]);
+        }
+
+        _figures.Clear();
+
+        for (int i = 0; i < _belts.Count; i++)
+        {
+            ReleaseBelt(_belts[i]);
+        }
+
+        _belts.Clear();
+
+        for (int i = 0; i < _holes.Count; i++)
+        {
+            ReleaseHole(_holes[i]);
+        }
+
+        _holes.Clear();
+
+        Timing.KillCoroutines(_figureSpawnCoroutine);
+    }
+
+    public void Tick()
+    {
+        if (!_isLaunched) return;
+
+        for (int i = 0; i < _belts.Count; i++)
+        {
+            _belts[i].Tick();
+        }
     }
 
     private void HealthChanged(int health)
@@ -68,14 +120,66 @@ public class SortingGameplay
         }
     }
 
-    private void FigureSorted()
+    private void FigureSorted(SortingGameplayFigureSorted signal)
     {
+        _figures.Remove(signal.SortedFigure);
+        ReleaseFigure(signal.SortedFigure);
+
         _score.Value++;
     }
 
-    private void FigureDestroyed()
+    private void FigureDestroyed(SortingGameplayFigureDestroyed signal)
     {
+        _figures.Remove(signal.DestroyedFigure);
+        ReleaseFigure(signal.DestroyedFigure);
+
         _health.Value--;
+    }
+
+    private SortingGameplayFigure GetRandomFigure(GameplayConfig.State config, SortingGameplayBelt belt)
+    {
+
+    }
+
+    private SortingGameplayBelt GetBelt()
+    {
+
+    }
+
+    private SortingGameplayFigureHole GetHole()
+    {
+
+    }
+
+    private void ReleaseFigure(SortingGameplayFigure figure)
+    {
+
+    }
+
+    private void ReleaseBelt(SortingGameplayBelt belt)
+    {
+
+    }
+
+    private void ReleaseHole(SortingGameplayFigureHole hole)
+    {
+
+    }
+
+    private IEnumerator<float> _FigureSpawnProcess()
+    {
+        while (true)
+        {
+            float timeout = _parameters.GameplayConfig.RandomSpawnTimeout;
+
+            yield return Timing.WaitForSeconds(timeout);
+
+            var belt = _belts[Random.Range(0, _belts.Count)];
+
+            var newFigure = GetRandomFigure(_parameters.GameplayConfig, belt);
+
+            _figures.Add(newFigure);
+        }
     }
 
     public class LaunchParameters

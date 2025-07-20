@@ -11,11 +11,11 @@ public abstract class FSMState<T> : IState<T> where T : StateEnterData
 
     private List<CoroutineHandle> _disposableOnExitCoroutines;
 
-    public FSMState(FSMStateMono<T> view)
+    public FSMState(FSMStateMono<T> mono)
     {
-        if (view != null)
+        if (mono != null)
         {
-            view.Setup(this);
+            mono.Setup(this);
         }
 
         _disposableOnExitCoroutines = new();

@@ -1,14 +1,21 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Zenject;
 
-public abstract class FSMStateMono<T> : MonoBehaviour where T : StateEnterData 
+public abstract class FSMStateMono<T> : MonoBehaviour where T : StateEnterData
 {
+    [Inject] private SignalBus _signalBus;
+
+    protected SignalBus SignalBus => _signalBus;
+
     private FSMState<T> _associatedState;
 
-    public void Setup(FSMState<T> hfsmState)
+    protected FSMState<T> AssociatedState => _associatedState;
+
+    public virtual void Setup(FSMState<T> fsmState)
     {
-        _associatedState = hfsmState;
+        _associatedState = fsmState;
     }
 
     protected void TryLaunchCoroutineWithStateLifeSpan(IEnumerator<float> coroutine)

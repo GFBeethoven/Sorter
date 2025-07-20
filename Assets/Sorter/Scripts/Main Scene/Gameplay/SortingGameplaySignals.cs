@@ -20,6 +20,22 @@ public struct SortingGameplayScoreChanged
     }
 }
 
-public struct SortingGameplayFigureDestroyed { }
+public struct SortingGameplayFigureDestroyed
+{
+    public SortingGameplayFigure DestroyedFigure { get; }
 
-public struct SortingGameplayFigureSorted { }
+    public SortingGameplayFigureDestroyed(SortingGameplayFigure destroyedFigure)
+    {
+        DestroyedFigure = destroyedFigure;
+    }
+}
+
+public struct SortingGameplayFigureSorted
+{
+    public SortingGameplayFigure SortedFigure { get; }
+
+    public SortingGameplayFigureSorted(SortingGameplayFigure sortedFigure)
+    {
+        SortedFigure = sortedFigure;
+    }
+}

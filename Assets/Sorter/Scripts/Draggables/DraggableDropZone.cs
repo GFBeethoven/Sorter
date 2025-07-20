@@ -3,10 +3,12 @@ using System.Collections.Generic;
 using System;
 using Zenject;
 
-[RequireComponent(typeof(Collider))]
+[RequireComponent(typeof(Collider2D))]
 public abstract class DraggableDropZone<T> : MonoBehaviour, IDraggableDropZone where T : Draggable
 {
     [Inject] private SignalBus _signalBus;
+
+    protected SignalBus SignalBus => _signalBus;
 
     public const string LayerMask = "DraggableDropZone";
 

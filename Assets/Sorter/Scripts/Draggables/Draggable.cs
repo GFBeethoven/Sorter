@@ -2,7 +2,7 @@ using System;
 using UnityEngine;
 using Zenject;
 
-[RequireComponent(typeof(Collider))]
+[RequireComponent(typeof(Collider2D))]
 public class Draggable : MonoBehaviour, IDraggable
 {
     public const string LayerMask = "Draggable";
@@ -23,14 +23,14 @@ public class Draggable : MonoBehaviour, IDraggable
         }
     }
 
-    private Collider _collider;
-    protected Collider Collider
+    private Collider2D _collider;
+    protected Collider2D Collider
     {
         get
         {
             if (_collider == null)
             {
-                _collider = GetComponent<Collider>();
+                _collider = GetComponent<Collider2D>();
             }
 
             return _collider;

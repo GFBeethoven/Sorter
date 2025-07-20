@@ -2,9 +2,24 @@ using UnityEngine;
 
 public class LoseState : FSMState<LoseState.EnterData>, ISignalHandler
 {
-    public LoseState() : base(null) { }
+    public int Score => _enterData?.Score ?? 0;
+    public int TargetScore => _enterData?.TargetScore ?? 0;
 
-    public override void Enter(EnterData enterData) { }
+    private EnterData _enterData;
+
+    private LoseStateView _view;
+
+    public LoseState(LoseStateView view) : base(view)
+    {
+        _view = view;
+    }
+
+    public override void Enter(EnterData enterData)
+    {
+        _enterData = enterData;
+
+        _view.RefreshInfo();
+    }
 
     public override void Exit() { }
 

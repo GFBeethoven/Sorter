@@ -2,9 +2,25 @@ using UnityEngine;
 
 public class WinState : FSMState<WinState.EnterData>, ISignalHandler
 {
-    public WinState() : base(null) { }
+    public int Health => _enterData?.Health ?? 0;
+    public int Score => _enterData?.Score ?? 0;
+    public int TargetScore => _enterData?.TargetScore ?? 0;
 
-    public override void Enter(EnterData enterData) { }
+    private EnterData _enterData;
+
+    private WinStateView _view;
+
+    public WinState(WinStateView view) : base(view)
+    {
+        _view = view;
+    }
+
+    public override void Enter(EnterData enterData)
+    {
+        _enterData = enterData;
+
+        _view.RefreshInfo();
+    }
 
     public override void Exit() { }
 
