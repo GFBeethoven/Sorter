@@ -12,7 +12,12 @@ public class SharedGameObjectsInstaller : MonoInstaller
         var shared = Instantiate(_sharedObjects, null);
         DontDestroyOnLoad(shared);
 
-        Container.Bind<GameViewport>().FromInstance(_sharedObjects.GetComponentInChildren<GameViewport>())
-            .AsSingle();
+        Camera camera = shared.GetComponentInChildren<Camera>();
+        GameViewport viewport = shared.GetComponentInChildren<GameViewport>();
+
+        Container.Bind<Camera>().FromInstance(camera).AsSingle();
+        Container.Bind<GameViewport>().FromInstance(viewport).AsSingle();
+
+        Container.QueueForInject(viewport);
     }
 }

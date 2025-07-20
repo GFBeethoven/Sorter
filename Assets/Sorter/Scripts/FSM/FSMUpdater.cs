@@ -1,15 +1,11 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Zenject;
 
 public class FSMUpdater : MonoBehaviour
 {
-    private FSM _fsm;
-
-    public void Initialize(FSM fsm)
-    {
-        _fsm = fsm;
-    }
+    [Inject] private FSM _fsm;
 
     private void Update()
     {

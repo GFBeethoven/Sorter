@@ -6,6 +6,9 @@ using Zenject;
 public class SortingGameplay
 {
     private SignalBus _signalBus;
+    private SortingGameplayFigure.Pool _figurePool;
+    private SortingGameplayBelt.Pool _beltPool;
+    private SortingGameplayFigureHole.Pool _holePool;
 
     private ReactiveProperty<int> _health;
     private ReactiveProperty<int> _score;
@@ -20,9 +23,12 @@ public class SortingGameplay
 
     private CoroutineHandle _figureSpawnCoroutine;
 
-    public SortingGameplay(SignalBus signalBus)
+    public SortingGameplay(SignalBus signalBus, SortingGameplayFigure.Pool figurePool, SortingGameplayBelt.Pool beltPool, SortingGameplayFigureHole.Pool holePool)
     {
         _signalBus = signalBus;
+        _figurePool = figurePool;
+        _beltPool = beltPool;
+        _holePool = holePool;
 
         _health = new ReactiveProperty<int>(0);
         _score = new ReactiveProperty<int>(0);
@@ -136,34 +142,34 @@ public class SortingGameplay
         _health.Value--;
     }
 
-    private SortingGameplayFigure GetRandomFigure(GameplayConfig.State config, SortingGameplayBelt belt)
+    private SortingGameplayFigure GetRandomFigure(FigureConfig.Data figureData, SortingGameplayBelt belt, float relativeVelocity)
     {
-
+        return _figurePool.Spawn(figureData, belt, relativeVelocity);
     }
 
     private SortingGameplayBelt GetBelt()
     {
-
+        return _beltPool.Spawn();
     }
 
-    private SortingGameplayFigureHole GetHole()
+    private SortingGameplayFigureHole GetHole(FigureConfig.Data data)
     {
-
+        return _holePool.Spawn(data);
     }
 
     private void ReleaseFigure(SortingGameplayFigure figure)
     {
-
+        _figurePool.Despawn(figure);
     }
 
     private void ReleaseBelt(SortingGameplayBelt belt)
     {
-
+        _beltPool.Despawn(belt);
     }
 
     private void ReleaseHole(SortingGameplayFigureHole hole)
     {
-
+        _holePool.Despawn(hole);
     }
 
     private IEnumerator<float> _FigureSpawnProcess()
@@ -176,7 +182,11 @@ public class SortingGameplay
 
             var belt = _belts[Random.Range(0, _belts.Count)];
 
-            var newFigure = GetRandomFigure(_parameters.GameplayConfig, belt);
+            var figureData = _parameters.AllFigures[Random.Range(0, _parameters.AllFigures.Length)];
+
+            var relativeVelocity = _parameters.GameplayConfig.RandomFigureVelocity;
+
+            var newFigure = GetRandomFigure(figureData, belt, relativeVelocity);
 
             _figures.Add(newFigure);
         }

@@ -1,4 +1,5 @@
 using UnityEngine;
+using Zenject;
 
 [RequireComponent(typeof(WorldRectTransform))]
 public class SortingGameplayFigureHole : DraggableDropZone<SortingGameplayFigure>
@@ -34,5 +35,15 @@ public class SortingGameplayFigureHole : DraggableDropZone<SortingGameplayFigure
         if (_targetFigure == null || draggable == null) return false;
 
         return _targetFigure.Id == draggable.FigureId;
+    }
+
+    public class Pool : MonoMemoryPool<FigureConfig.Data, SortingGameplayFigureHole>
+    {
+        protected override void Reinitialize(FigureConfig.Data data, SortingGameplayFigureHole item)
+        {
+            base.Reinitialize(data, item);
+
+            item.Setup(data);
+        }
     }
 }

@@ -8,15 +8,17 @@ public class SortingGameplayView : FSMStateMono<GameplayState.EnterData>
 
     [SerializeField] private LineWorldLayoutGroup _holesGroup;
 
+    [Inject] private GameViewport _viewport;
+
     public override void Setup(FSMState<GameplayState.EnterData> fsmState)
     {
         base.Setup(fsmState);
 
+        _beltsGroup.Initialize(_viewport, Vector2.zero, Vector2.one);
+        _holesGroup.Initialize(_viewport, Vector2.zero, Vector2.one);
+
         _beltsGroup.Direction = LineWorldLayoutGroup.Axis.Vertical;
         _holesGroup.Direction = LineWorldLayoutGroup.Axis.Horizontal;
-
-        _beltsGroup.Initialize(Vector2.zero, Vector2.one);
-        _holesGroup.Initialize(Vector2.zero, Vector2.one);
     }
 
     public void UpdateView(GameplayLayoutConfig layout, IEnumerable<SortingGameplayBelt> belts, 

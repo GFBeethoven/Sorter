@@ -1,4 +1,5 @@
 using UnityEngine;
+using Zenject;
 
 [RequireComponent(typeof(WorldRectTransform))]
 public class SortingGameplayBelt : DraggableDropZone<SortingGameplayFigure>
@@ -56,4 +57,6 @@ public class SortingGameplayBelt : DraggableDropZone<SortingGameplayFigure>
 
         figure.transform.position = position;
     }
+
+    public class Pool : MonoMemoryPool<SortingGameplayBelt> { }
 }

@@ -5,18 +5,18 @@ public class MainFSMInstaller : MonoInstaller
 {
     public override void InstallBindings()
     {
-        Container.Bind<TitleStateView>().FromComponentInHierarchy(true).AsSingle();
-        Container.Bind<WinStateView>().FromComponentInHierarchy(true).AsSingle();
-        Container.Bind<LoseStateView>().FromComponentInHierarchy(true).AsSingle();
+        Container.BindInterfacesAndSelfTo<TitleStateView>().FromComponentInHierarchy(true).AsSingle();
+        Container.BindInterfacesAndSelfTo<WinStateView>().FromComponentInHierarchy(true).AsSingle();
+        Container.BindInterfacesAndSelfTo<LoseStateView>().FromComponentInHierarchy(true).AsSingle();
+        Container.BindInterfacesAndSelfTo<SortingGameplayView>().FromComponentInHierarchy(true).AsSingle();
 
-        Container.Bind<IState>().To<TitleState>().AsSingle();
-        Container.Bind<IState>().To<GameplayState>().AsSingle();
-        Container.Bind<IState>().To<WinState>().AsSingle();
-        Container.Bind<IState>().To<LoseState>().AsSingle();
+        Container.BindInterfacesAndSelfTo<TitleState>().AsSingle();
+        Container.BindInterfacesAndSelfTo<GameplayState>().AsSingle();
+        Container.BindInterfacesAndSelfTo<WinState>().AsSingle();
+        Container.BindInterfacesAndSelfTo<LoseState>().AsSingle();
 
-        Container.Bind<FSM>().FromMethod((context) =>
-        {
-            return new FSM(context.Container.ResolveAll<IState>().ToArray(), new TitleState.EnterData());
-        });
+        Container.Bind<StateEnterData>().WithId(FSM.InitEnterDataId).To<TitleState.EnterData>().AsSingle();
+
+        Container.Bind<FSM>().ToSelf().AsSingle();
     }
 }

@@ -6,7 +6,9 @@ using Zenject;
 
 public class FSM
 {
-    [Inject] private SignalBus _signalBus;
+    public const string InitEnterDataId = "InitMainFSMState";
+
+    private SignalBus _signalBus;
 
     public event Action OnStateChanged;
 
@@ -14,8 +16,10 @@ public class FSM
 
     private IState[] _states;
 
-    public FSM(IState[] allStates, StateEnterData initEnterData)
+    public FSM(IState[] allStates, SignalBus signalBus, [Inject(Id = InitEnterDataId)] StateEnterData initEnterData)
     {
+        _signalBus = signalBus;
+
         _signalBus.Subscribe<FSMSignal>(Signal);
 
         _states = allStates;

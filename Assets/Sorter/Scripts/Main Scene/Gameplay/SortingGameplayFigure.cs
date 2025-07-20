@@ -1,5 +1,6 @@
 using System;
 using UnityEngine;
+using Zenject;
 
 [RequireComponent(typeof(SpriteRenderer))]
 public class SortingGameplayFigure : Draggable
@@ -54,15 +55,7 @@ public class SortingGameplayFigure : Draggable
         }
     }
 
-    public int FigureId
-    {
-        get
-        {
-            if (Data == null) return -1;
-
-            return Data.Id;
-        }
-    }
+    public int FigureId => Data?.Id ?? -1;
 
     private float _relativeVelocity;
     public float RelativeVelocity => _relativeVelocity;
@@ -101,5 +94,16 @@ public class SortingGameplayFigure : Draggable
     private void InvokeRelativePositionChanged(float position)
     {
         _relativePositionChanged?.Invoke(this, position);
+    }
+
+    public class Pool : MonoMemoryPool<FigureConfig.Data, SortingGameplayBelt, float, SortingGameplayFigure>
+    {
+        protected override void Reinitialize(FigureConfig.Data data, SortingGameplayBelt belt, float relativeVelocity, 
+            SortingGameplayFigure item)
+        {
+            base.Reinitialize(data, belt, relativeVelocity, item);
+
+            item.Setup(data, belt, relativeVelocity);
+        }
     }
 }

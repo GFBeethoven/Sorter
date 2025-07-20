@@ -17,20 +17,24 @@ public class GameViewport : MonoBehaviour, IInitializable
 
     private bool _isInitialized = false;
 
-    public void Initialize()
+    [Inject]
+    private void Init(Camera camera)
     {
         if (_isInitialized) return;
 
-        _camera = Camera.main;
+        _camera = camera;
 
         _size = new ReactiveProperty<Vector2>(new Vector2(_camera.orthographicSize * 2.0f * _camera.aspect, 
             _camera.orthographicSize * 2.0f));
 
         _aspect = new ReactiveProperty<float>(_camera.aspect);
 
-        Timing.RunCoroutine(_CheckAspectChange());
-
         _isInitialized = true;
+    }
+
+    public void Initialize()
+    {
+        Timing.RunCoroutine(_CheckAspectChange());
     }
 
     private IEnumerator<float> _CheckAspectChange()

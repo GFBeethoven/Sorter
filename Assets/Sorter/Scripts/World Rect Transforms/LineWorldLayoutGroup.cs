@@ -5,8 +5,6 @@ using Zenject;
 
 public class LineWorldLayoutGroup : MonoBehaviour
 {
-    [Inject] private GameViewport _viewport;
-
     public ReactiveProperty<Vector2> MinAnchor { get; private set; }
     public ReactiveProperty<Vector2> MaxAnchor { get; private set; }
     public ReactiveList<WorldRectTransform> Children { get; private set; }
@@ -36,16 +34,20 @@ public class LineWorldLayoutGroup : MonoBehaviour
 
     private Transform _transform;
 
-    public void Initialize(Vector2 anchorMin, Vector2 anchorMax)
+    private GameViewport _viewport;
+
+    public void Initialize(GameViewport viewport, Vector2 anchorMin, Vector2 anchorMax)
     {
         _transform = transform;
+
+        _viewport = viewport;
 
         MinAnchor = new ReactiveProperty<Vector2>(anchorMin);
         MaxAnchor = new ReactiveProperty<Vector2>(anchorMax);
 
         Children = new();
 
-        _anchorWorldPositions = new AnchorWorldPositions(_viewport, MinAnchor.Value, MaxAnchor.Value);
+        _anchorWorldPositions = new AnchorWorldPositions(viewport, MinAnchor.Value, MaxAnchor.Value);
 
         MinAnchor.Subscribe(AnchorMinChanged);
         MaxAnchor.Subscribe(AnchorMaxChanged);
@@ -54,7 +56,7 @@ public class LineWorldLayoutGroup : MonoBehaviour
         Children.OnItemRemove += OnChildrenRemove;
         Children.OnBeforeClear += OnBeforeClear;
 
-        _viewport.Size.Subscribe(OnViewportSizeChanged);
+        viewport.Size.SubscribeWithEnableBinding(OnViewportSizeChanged, this);
     }
 
     private void OnChildrenAdd(int index, WorldRectTransform child)
