@@ -17,16 +17,19 @@ public class SortingGameplayFigureHoleDraggableZone : DraggableDropZone<SortingG
 
     protected override void OnAddItem(SortingGameplayFigure newItem)
     {
-        newItem.CanDrag = false;
+        if (_targetFigure != null || newItem != null)
+        {
+            newItem.CanDrag = false;
 
-        SignalBus.Fire<SortingGameplayFigureSorted>(new SortingGameplayFigureSorted(newItem));
-    }
-
-    protected override bool IsNewItemValid(SortingGameplayFigure draggable)
-    {
-        if (_targetFigure == null || draggable == null) return false;
-
-        return _targetFigure.Id == draggable.FigureId;
+            if (_targetFigure.Id == newItem.FigureId)
+            {
+                SignalBus.Fire<SortingGameplayFigureSorted>(new SortingGameplayFigureSorted(newItem));
+            }
+            else
+            {
+                SignalBus.Fire <SortingGameplayFigureDestroyed>(new SortingGameplayFigureDestroyed(newItem));
+            }
+        }
     }
 
     Vector2 IDraggableItemSizeFitter.GetPrefferedSize(Draggable draggable)

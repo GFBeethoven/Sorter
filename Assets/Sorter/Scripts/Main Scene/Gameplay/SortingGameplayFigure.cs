@@ -8,6 +8,12 @@ using Zenject;
 [RequireComponent(typeof(SpriteRenderer))]
 public class SortingGameplayFigure : Draggable
 {
+    public const int DefaultSortingOrder = 5;
+    public const int OnDragSortingOrder = 100;
+
+    public readonly static Color DefaultColor = Color.white;
+    public readonly static Color DroppedToHoleColor = Color.clear;
+
     private Action<SortingGameplayFigure, float> _relativePositionChanged;
     public event Action<SortingGameplayFigure, float> RelativePositionChanged
     {
@@ -66,7 +72,7 @@ public class SortingGameplayFigure : Draggable
 
     public ReactiveProperty<float> RelativePosition { get; private set; } = new ReactiveProperty<float>(0.0f);
 
-    private CoroutineHandle _returnToBeltCoroutine;
+    private CoroutineHandle _currentCoroutine;
 
     private void OnEnable()
     {
@@ -76,6 +82,8 @@ public class SortingGameplayFigure : Draggable
     private void OnDisable()
     {
         RelativePosition.Unsubscribe(InvokeRelativePositionChanged);
+
+        StopCurrentCoroutine();
     }
 
     public void Setup(FigureConfig.Data data, SortingGameplayBelt belt, SortingGameplayFigureHole targetHole,
@@ -87,6 +95,10 @@ public class SortingGameplayFigure : Draggable
         _relativeVelocity = relativeVelocity;
         RelativePosition.Value = 0.0f;
         CanDrag = true;
+        CachedTransform.localScale = Vector3.one;
+        SpriteRenderer.color = DefaultColor;
+        SpriteRenderer.sortingOrder = DefaultSortingOrder;
+        CachedTransform.localEulerAngles = new Vector3(0.0f, 0.0f, UnityEngine.Random.Range(-20.0f, 20.0f));
 
         SetOwner(_belt.DraggableZone);
     }
@@ -105,7 +117,16 @@ public class SortingGameplayFigure : Draggable
     {
         base.OnDragStart(pointerPosition);
 
-        StopReturnToBelt();
+        SpriteRenderer.sortingOrder = OnDragSortingOrder;
+
+        StopCurrentCoroutine();
+    }
+
+    protected override void OnDragEnd(Vector3 pointerPosition)
+    {
+        base.OnDragEnd(pointerPosition);
+
+        SpriteRenderer.sortingOrder = DefaultSortingOrder;
     }
 
     protected override void SetOwnerOnDrop(IDraggableDropZone owner)
@@ -115,6 +136,12 @@ public class SortingGameplayFigure : Draggable
             SetOwner(null);
 
             ReturnToBelt();
+        }
+        else if (owner == (IDraggableDropZone)_targetHole.DraggableZone)
+        {
+            SetOwner(null);
+
+            PlaceToHole();
         }
         else
         {
@@ -147,26 +174,43 @@ public class SortingGameplayFigure : Draggable
 
     private void ReturnToBelt()
     {
-        StopReturnToBelt();
+        StopCurrentCoroutine();
 
         if (_belt == null) return;
 
-        Vector3 onBeltSize = transform.localScale;
+        Vector3 onBeltSize = CachedTransform.localScale;
 
         if (_belt.DraggableZone is IDraggableItemSizeFitter sizeFitter)
         {
             onBeltSize = sizeFitter.GetPrefferedSize(this);
         }
 
-        _returnToBeltCoroutine = Timing.RunCoroutine(_ReturnToBelt(_belt.GetBeltPosition(RelativePosition.Value),
+        _currentCoroutine = Timing.RunCoroutine(_ReturnToBelt(_belt.GetBeltPosition(RelativePosition.Value),
             onBeltSize));
     }
 
-    private void StopReturnToBelt()
+    private void PlaceToHole()
     {
-        if (_returnToBeltCoroutine.IsValid)
+        StopCurrentCoroutine();
+
+        if (_belt == null) return;
+
+        Vector3 targetScale = CachedTransform.localScale;
+
+        if (_targetHole.DraggableZone is IDraggableItemSizeFitter sizeFitter)
         {
-            Timing.KillCoroutines(_returnToBeltCoroutine);
+            targetScale = sizeFitter.GetPrefferedSize(this);
+        }
+
+        _currentCoroutine = Timing.RunCoroutine(_PlaceToHole(_targetHole.GetHolePosition(),
+            targetScale));
+    }
+
+    private void StopCurrentCoroutine()
+    {
+        if (_currentCoroutine.IsValid)
+        {
+            Timing.KillCoroutines(_currentCoroutine);
         }
     }
 
@@ -175,7 +219,7 @@ public class SortingGameplayFigure : Draggable
         const float Duration = 0.2f;
         const float BezierCurveAmplitude = 2.0f;
 
-        Vector3 startPosition = transform.position;
+        Vector3 startPosition = CachedTransform.position;
         Vector3 middlePosition = (startPosition + onBeltPosition) / 2.0f;
         Vector3 endPosition = onBeltPosition;
 
@@ -184,19 +228,19 @@ public class SortingGameplayFigure : Draggable
             middlePosition += (Vector3)Vector2.Perpendicular(endPosition - startPosition).normalized * BezierCurveAmplitude;
         }
 
-        Vector3 startScale = transform.localScale;
+        Vector3 startScale = CachedTransform.localScale;
         Vector3 endScale = onBeltScale;
 
         for (float i = 0.0f; i < 1.0f; i += Timing.DeltaTime / Duration)
         {
-            transform.position = BezierCurve(Easing.OutBack(i));
-            transform.localScale = Vector3.LerpUnclamped(startScale, endScale, Easing.OutBack(i));
+            CachedTransform.position = BezierCurve(Easing.OutBack(i));
+            CachedTransform.localScale = Vector3.LerpUnclamped(startScale, endScale, Easing.OutBack(i));
 
             yield return Timing.WaitForOneFrame;
         }
 
-        transform.position = endPosition;
-        transform.localScale = onBeltScale;
+        CachedTransform.position = endPosition;
+        CachedTransform.localScale = onBeltScale;
 
         SetOwner(_belt?.DraggableZone);
 
@@ -206,6 +250,46 @@ public class SortingGameplayFigure : Draggable
                      + 2 * (1 - t) * t * middlePosition
                      + Mathf.Pow(t, 2) * endPosition;
         }
+    }
+
+    private IEnumerator<float> _PlaceToHole(Vector3 onHolePosition, Vector3 scale)
+    {
+        const float MoveDuration = 0.2f;
+        const float DropDuration = 0.2f;
+
+        CanDrag = false;
+
+        Vector3 startPosition = CachedTransform.position;
+        Vector3 endPosition = onHolePosition;
+
+        Vector3 startScale = CachedTransform.localScale;
+        Vector3 endScale = scale;
+
+        for (float i = 0.0f; i < 1.0f; i += Timing.DeltaTime / MoveDuration)
+        {
+            CachedTransform.position = Vector3.Lerp(startPosition, endPosition, Easing.OutQuad(i));
+            CachedTransform.localScale = Vector3.LerpUnclamped(startScale, endScale, i);
+
+            yield return Timing.WaitForOneFrame;
+        }
+
+        CachedTransform.position = endPosition;
+        CachedTransform.localScale = endScale;
+
+        Color startColor = SpriteRenderer.color;
+
+        for (float i = 0.0f; i < 1.0f; i += Timing.DeltaTime / DropDuration)
+        {
+            SpriteRenderer.color = Color.Lerp(startColor, DroppedToHoleColor, Easing.InQuad(i));
+            CachedTransform.localScale = Vector3.Lerp(endScale, Vector3.zero, Easing.InQuad(i));
+
+            yield return Timing.WaitForOneFrame;
+        }
+
+        SpriteRenderer.color = DroppedToHoleColor;
+        CachedTransform.localScale = Vector3.zero;
+
+        SetOwner(_targetHole?.DraggableZone);
     }
 
     public class Pool : MonoMemoryPool<FigureConfig.Data, SortingGameplayBelt, SortingGameplayFigureHole, float, SortingGameplayFigure>

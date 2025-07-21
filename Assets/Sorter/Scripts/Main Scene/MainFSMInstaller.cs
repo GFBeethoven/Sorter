@@ -18,5 +18,7 @@ public class MainFSMInstaller : MonoInstaller
         Container.Bind<FSM>().ToSelf().AsSingle();
 
         Container.BindInterfacesAndSelfTo<MainFSMEntryPoint>().AsSingle();
+
+        Container.Bind<TransitionCanvas>().FromComponentInHierarchy(true).AsSingle();
     }
 }

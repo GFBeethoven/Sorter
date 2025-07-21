@@ -16,13 +16,13 @@ public class MainFSMWinSignalData : FSMSignalData
 
     public int Score { get; }
 
-    public int TargetScore { get; }
+    public int MaxScore { get; }
 
-    public MainFSMWinSignalData(int health, int score, int targetScore)
+    public MainFSMWinSignalData(int health, int score, int maxScore)
     {
         Health = health;
         Score = score;
-        TargetScore = targetScore;
+        MaxScore = maxScore;
     }
 }
 
@@ -30,12 +30,12 @@ public class MainFSMLoseSignalData : FSMSignalData
 {
     public int Score { get; }
 
-    public int TargetScore { get; }
+    public int MaxScore { get; }
 
-    public MainFSMLoseSignalData(int score, int targetScore)
+    public MainFSMLoseSignalData(int score, int maxScore)
     {
         Score = score;
-        TargetScore = targetScore;
+        MaxScore = maxScore;
     }
 }
 

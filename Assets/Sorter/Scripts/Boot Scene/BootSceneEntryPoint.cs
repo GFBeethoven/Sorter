@@ -15,7 +15,6 @@ public class BootSceneEntryPoint : IInitializable
             new LoadGameStateOperation()
         };
 
-
         _loadingScreen.Show();
         _loadingScreen.PerformLoadingOperations(operations, LoadingSuccess, LoadingFailure);
     }

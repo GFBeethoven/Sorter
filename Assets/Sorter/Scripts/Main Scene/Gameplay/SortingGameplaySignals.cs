@@ -39,3 +39,32 @@ public struct SortingGameplayFigureSorted
         SortedFigure = sortedFigure;
     }
 }
+
+public struct SortingGameplayWin
+{
+    public int Health { get; }
+
+    public int Score { get; }
+
+    public int MaxScore { get; }
+
+    public SortingGameplayWin(int health, int score, int totalScore)
+    {
+        Health = health;
+        Score = score;
+        MaxScore = totalScore;
+    }
+}
+
+public struct SortingGameplayLose
+{
+    public int Score { get; }
+
+    public int MaxScore { get; }
+
+    public SortingGameplayLose(int score, int maxScore)
+    {
+        Score = score;
+        MaxScore = maxScore;
+    }
+}

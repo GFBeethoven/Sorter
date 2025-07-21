@@ -26,8 +26,8 @@ public class GameplayConfig : ScriptableObject
     [Serializable]
     public class State
     {
-        private const int SortWinCountRangeMin = 1;
-        private const int SortWinCountRangeMax = 150;
+        private const int FigureToSortCountRangeMin = 1;
+        private const int FigureToSortCountRangeMax = 150;
 
         private const float SpawnTimeoutRangeMin = 0.0f;
         private const float SpawnTimeoutRangeMax = 50.0f;
@@ -39,8 +39,10 @@ public class GameplayConfig : ScriptableObject
 
         [field: SerializeField, Min(1.0f)] public int PlayerHealth { get; private set; }
 
-        [field: SerializeField, Range(SortWinCountRangeMin, SortWinCountRangeMax)] public int SortWinCountMin { get; private set; } 
-        [field: SerializeField, Range(SortWinCountRangeMin, SortWinCountRangeMax)] public int SortWinCountMax { get; private set; } 
+        [field: SerializeField, Min(1.0f)] public int BeltCount { get; private set; }
+
+        [field: SerializeField, Range(FigureToSortCountRangeMin, FigureToSortCountRangeMax)] public int FigureToSortCountMin { get; private set; } 
+        [field: SerializeField, Range(FigureToSortCountRangeMin, FigureToSortCountRangeMax)] public int FigureToSortCountMax { get; private set; } 
 
         [field: SerializeField, Range(SpawnTimeoutRangeMin, SpawnTimeoutRangeMax)] public float SpawnTimeoutMin { get; private set; } 
         [field: SerializeField, Range(SpawnTimeoutRangeMin, SpawnTimeoutRangeMax)] public float SpawnTimeoutMax { get; private set; }
@@ -48,7 +50,7 @@ public class GameplayConfig : ScriptableObject
         [field: SerializeField, Range(FigureVelocityRangeMin, FigureVelocityRangeMax)] public float FigureVelocityMin { get; private set; }
         [field: SerializeField, Range(FigureVelocityRangeMin, FigureVelocityRangeMax)] public float FigureVelocityMax { get; private set; }
 
-        public int RandomSortWinCount => UnityEngine.Random.Range(SortWinCountMin, SortWinCountMax);
+        public int RandomFigureToSortCount => UnityEngine.Random.Range(FigureToSortCountMin, FigureToSortCountMax);
 
         public float RandomSpawnTimeout => UnityEngine.Random.Range(SpawnTimeoutMin, SpawnTimeoutMax);
 
@@ -56,8 +58,8 @@ public class GameplayConfig : ScriptableObject
 
         public void Validate()
         {
-            SortWinCountMax = Mathf.Clamp(SortWinCountMax, SortWinCountMin, SortWinCountRangeMax);
-            SortWinCountMin = Mathf.Clamp(SortWinCountMin, SortWinCountRangeMin, SortWinCountMax);
+            FigureToSortCountMax = Mathf.Clamp(FigureToSortCountMax, FigureToSortCountMin, FigureToSortCountRangeMax);
+            FigureToSortCountMin = Mathf.Clamp(FigureToSortCountMin, FigureToSortCountRangeMin, FigureToSortCountMax);
 
             SpawnTimeoutMax = Mathf.Clamp(SpawnTimeoutMax, SpawnTimeoutMin, SpawnTimeoutRangeMax);
             SpawnTimeoutMin = Mathf.Clamp(SpawnTimeoutMin, SpawnTimeoutRangeMin, SpawnTimeoutMax);

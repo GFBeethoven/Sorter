@@ -4,7 +4,6 @@ using UnityEngine;
 public class LoseStateView : FSMStateMono<LoseState.EnterData>
 {
     [SerializeField] private TextMeshProUGUI _score;
-    [SerializeField] private TextMeshProUGUI _targetScore;
 
     private LoseState _state;
 
@@ -27,8 +26,7 @@ public class LoseStateView : FSMStateMono<LoseState.EnterData>
 
     public void RefreshInfo()
     {
-        _score.text = _state.Score.ToString();
-        _targetScore.text = _state.TargetScore.ToString();
+        _score.text = $"{_state.Score}/{_state.TargetScore}";
     }
 
     public void RestartButtonClicked()

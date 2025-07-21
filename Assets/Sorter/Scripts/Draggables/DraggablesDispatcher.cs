@@ -106,6 +106,8 @@ public class DraggablesDispatcher
         if (_draggedObjects.ContainsKey(pointerId))
             return;
 
+        Debug.Log($"Drag Begin: {pointerId}");
+
         Vector2 pos = _camera.ScreenToWorldPoint(screenPos);
 
         Collider2D hit = Physics2D.OverlapPoint(pos, DraggablesLayerMask);
@@ -133,6 +135,8 @@ public class DraggablesDispatcher
     {
         if (_draggedObjects.TryGetValue(pointerId, out var draggable))
         {
+            Debug.Log($"Drag: {pointerId}");
+
             Vector2 worldPos = _camera.ScreenToWorldPoint(screenPos);
 
             draggable.Drag(worldPos);
@@ -145,6 +149,8 @@ public class DraggablesDispatcher
     {
         if (_draggedObjects.TryGetValue(pointerId, out var draggable))
         {
+            Debug.Log($"Drag End: {pointerId}");
+
             _pointerPositions[pointerId] = screenPos;
 
             Vector2 worldPos = _camera.ScreenToWorldPoint(screenPos);
@@ -155,12 +161,8 @@ public class DraggablesDispatcher
 
             Collider2D hit = Physics2D.OverlapPoint(pos, DraggableDropZonesLayerMask);
 
-            Debug.Log("End drag");
-
             if (hit != null)
             {
-                Debug.Log(hit.gameObject);
-
                 IDraggableDropZone dropZone = hit.gameObject.GetComponent<IDraggableDropZone>();
 
                 if (dropZone != null && dropZone.IsNewItemValid(draggable))

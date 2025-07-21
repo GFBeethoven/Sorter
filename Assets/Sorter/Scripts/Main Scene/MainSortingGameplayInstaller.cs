@@ -19,7 +19,7 @@ public class MainSortingGameplayInstaller : MonoInstaller
             .FromComponentInNewPrefab(_sortingGameplayFigureHole).UnderTransformGroup("Holes");
 
         Container.Bind<SortingGameplay.LaunchParameters.IFactory>()
-            .To<SortingGameplay.LaunchParameters.RandomFactoryWithTaskConditions>()
+            .To<SortingGameplay.LaunchParameters.RandomFactory>()
             .AsSingle();
 
         Container.BindInterfacesAndSelfTo<SortingGameplayCanvas>().FromComponentInHierarchy(true).AsSingle();
@@ -27,5 +27,9 @@ public class MainSortingGameplayInstaller : MonoInstaller
         Container.Bind<SortingGameplay>().ToSelf().AsSingle();
 
         Container.Bind<DraggablesDispatcher>().ToSelf().AsSingle();
+
+        Container.Bind<SpriteRendererTilledBackground>().FromComponentInHierarchy(true).AsSingle();
+
+        Container.BindInterfacesAndSelfTo<SortingGameplayFXs>().FromComponentInHierarchy(true).AsSingle();
     }
 }

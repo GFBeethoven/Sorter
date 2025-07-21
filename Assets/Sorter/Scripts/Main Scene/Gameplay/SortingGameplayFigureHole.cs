@@ -48,6 +48,11 @@ public class SortingGameplayFigureHole : MonoBehaviour
         _view.Setup(targetFigure);
     }
 
+    public Vector3 GetHolePosition()
+    {
+        return _view.transform.position;
+    }
+
     private void PositionChanged(Vector2 position)
     {
         transform.position = position;

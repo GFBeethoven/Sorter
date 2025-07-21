@@ -16,5 +16,7 @@ public class MainSignalsInstaller : MonoInstaller
         Container.DeclareSignal<SortingGameplayScoreChanged>();
         Container.DeclareSignal<SortingGameplayFigureSorted>();
         Container.DeclareSignal<SortingGameplayFigureDestroyed>();
+        Container.DeclareSignal<SortingGameplayWin>();
+        Container.DeclareSignal<SortingGameplayLose>();
     }
 }

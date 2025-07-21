@@ -5,7 +5,6 @@ public class WinStateView : FSMStateMono<WinState.EnterData>
 {
     [SerializeField] private TextMeshProUGUI _health;
     [SerializeField] private TextMeshProUGUI _score;
-    [SerializeField] private TextMeshProUGUI _targetScore;
 
     private WinState _state;
 
@@ -29,8 +28,7 @@ public class WinStateView : FSMStateMono<WinState.EnterData>
     public void RefreshInfo()
     {
         _health.text = _state.Health.ToString();
-        _score.text = _state.Score.ToString();
-        _targetScore.text = _state.TargetScore.ToString();
+        _score.text = $"{_state.Score}/{_state.MaxScore}";
     }
 
     public void ContinueButtonClicked()
