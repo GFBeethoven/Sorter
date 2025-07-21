@@ -9,9 +9,13 @@ public class LoseState : FSMState<LoseState.EnterData>, ISignalHandler
 
     private LoseStateView _view;
 
-    public LoseState(LoseStateView view) : base(view)
+    private SortingGameplay.LaunchParameters.IFactory _gameplayParamsFactory;
+
+    public LoseState(LoseStateView view, SortingGameplay.LaunchParameters.IFactory gameplayParamsFactory) : base(view)
     {
         _view = view;
+
+        _gameplayParamsFactory = gameplayParamsFactory;
     }
 
     public override void Enter(EnterData enterData)
@@ -19,9 +23,14 @@ public class LoseState : FSMState<LoseState.EnterData>, ISignalHandler
         _enterData = enterData;
 
         _view.RefreshInfo();
+
+        _view.Show();
     }
 
-    public override void Exit() { }
+    public override void Exit()
+    {
+        _view.Hide();
+    }
 
     public override void FixedUpdate() { }
 
@@ -32,7 +41,14 @@ public class LoseState : FSMState<LoseState.EnterData>, ISignalHandler
         switch (data)
         {
             case MainFSMToGameplaySignalData toGameplayData:
-                Fsm.ChangeState(new GameplayState.EnterData(toGameplayData.LaunchParameters));
+                if (toGameplayData.LaunchParameters != null)
+                {
+                    Fsm.ChangeState(new GameplayState.EnterData(toGameplayData.LaunchParameters));
+                }
+                else
+                {
+                    Fsm.ChangeState(new GameplayState.EnterData(_gameplayParamsFactory.Create()));
+                }
                 break;
         }
     }

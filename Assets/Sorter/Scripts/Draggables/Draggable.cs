@@ -74,7 +74,7 @@ public class Draggable : MonoBehaviour, IDraggable
 
     public virtual void Dispose()
     {
-        (this as IDraggable).SetOwner(null);
+        SetOwner(null);
     }
 
     protected virtual void OnDragStart(Vector3 pointerPosition)
@@ -90,6 +90,16 @@ public class Draggable : MonoBehaviour, IDraggable
     protected virtual void OnDragEnd(Vector3 pointerPosition)
     {
         CachedTransform.position = _pointerDeltaPosition + pointerPosition;
+    }
+
+    protected virtual void DropOwnerOnDragStart()
+    {
+        SetOwner(null);
+    }
+
+    protected virtual void SetOwnerOnDrop(IDraggableDropZone owner)
+    {
+        SetOwner(owner);
     }
 
     protected virtual void SetOwner(IDraggableDropZone owner)
@@ -122,9 +132,14 @@ public class Draggable : MonoBehaviour, IDraggable
         OnDragEnd(pointerPosition);
     }
 
-    void IDraggable.SetOwner(IDraggableDropZone owner)
+    void IDraggable.DropOwnerOnDragStart()
     {
-        SetOwner(owner);
+        DropOwnerOnDragStart();
+    }
+
+    void IDraggable.SetOwnerOnDrop(IDraggableDropZone owner)
+    {
+        SetOwnerOnDrop(owner);
     }
 }
 
@@ -132,11 +147,15 @@ public interface IDraggableReadOnly : IDisposable { }
 
 public interface IDraggable : IDraggableReadOnly
 {
+    public bool CanDrag { get; }
+
     public void DragStart(Vector3 pointerPosition);
 
     public void Drag(Vector3 pointerPosition);
 
     public void DragEnd(Vector3 pointerPosition);
 
-    public void SetOwner(IDraggableDropZone owner);
+    public void DropOwnerOnDragStart();
+
+    public void SetOwnerOnDrop(IDraggableDropZone owner);
 }

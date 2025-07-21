@@ -1,13 +1,12 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.VisualScripting;
 using UnityEngine;
 using Zenject;
 
 public class FSM
 {
-    public const string InitEnterDataId = "InitMainFSMState";
-
     private SignalBus _signalBus;
 
     public event Action OnStateChanged;
@@ -16,7 +15,7 @@ public class FSM
 
     private IState[] _states;
 
-    public FSM(IState[] allStates, SignalBus signalBus, [Inject(Id = InitEnterDataId)] StateEnterData initEnterData)
+    public FSM(IState[] allStates, SignalBus signalBus)
     {
         _signalBus = signalBus;
 
@@ -28,8 +27,6 @@ public class FSM
         {
             allStates[i].Initialize(this);
         }
-
-        ChangeState(initEnterData);
     }
 
     public bool IsCurrentState(IState state)
@@ -70,6 +67,8 @@ public class FSM
 
     private void ChangeState<T>(IState<T> state, T enterData) where T : StateEnterData
     {
+        Debug.Log(state);
+
         _currentState?.Exit();
         _currentState = state;
         state.Enter(enterData);

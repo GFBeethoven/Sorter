@@ -2,9 +2,13 @@ using UnityEngine;
 using Zenject;
 
 [RequireComponent(typeof(WorldRectTransform))]
-public class SortingGameplayBelt : DraggableDropZone<SortingGameplayFigure>
+public class SortingGameplayBelt : MonoBehaviour
 {
-    [SerializeField] private Belt _belt;
+    [SerializeField, Range(0.0f, 1.0f)] private float _heightFactor = 1.0f;
+
+    [SerializeField] private SortingGameplayBeltDraggableZone _draggableZone;
+
+    [SerializeField] private Belt _view;
 
     private WorldRectTransform _rectTransform;
     public WorldRectTransform WorldRectTransform
@@ -13,49 +17,61 @@ public class SortingGameplayBelt : DraggableDropZone<SortingGameplayFigure>
         {
             if (_rectTransform == null)
             {
-                _rectTransform = GetComponent<WorldRectTransform>();    
+                _rectTransform = GetComponent<WorldRectTransform>();
             }
 
-            return _rectTransform;  
+            return _rectTransform;
         }
+    }
+
+    public DraggableDropZone<SortingGameplayFigure> DraggableZone => _draggableZone;
+
+    private void OnEnable()
+    {
+        WorldRectTransform.Position.Subscribe(PositionChanged);
+        WorldRectTransform.Size.Subscribe(SizeChanged);
+    }
+
+    private void OnDisable()
+    {
+        WorldRectTransform.Position.Unsubscribe(PositionChanged);
+        WorldRectTransform.Size.Unsubscribe(SizeChanged);
     }
 
     public void Tick()
     {
-        int count = DraggablesCount;
-
-        for (int i = 0; i < count; i++)
-        {
-            SortingGameplayFigure figure = GetItem(i);
-
-            figure.RelativePosition.Value += figure.RelativeVelocity * Time.deltaTime;
-
-            if (figure.RelativePosition.Value >= 1.0f)
-            {
-                figure.CanDrag = false;
-
-                SignalBus.Fire<SortingGameplayFigureDestroyed>(new SortingGameplayFigureDestroyed(figure));
-            }
-        }
+        _draggableZone.Tick();
     }
 
-    protected override void OnAddItem(SortingGameplayFigure newDraggable)
+    public Vector3 GetBeltPosition(float relativePosition)
     {
-        newDraggable.RelativePositionChanged += DraggableRelativePositionChanged;
+        return _draggableZone.GetBeltPosition(relativePosition);
     }
 
-    protected override void OnRemoveItem(SortingGameplayFigure oldDraggable)
+    private void PositionChanged(Vector2 position)
     {
-        oldDraggable.RelativePositionChanged -= DraggableRelativePositionChanged;
+        transform.position = position;
+
+        SetupEdgePoints();
     }
 
-    private void DraggableRelativePositionChanged(SortingGameplayFigure figure, float relativePosition)
+    private void SizeChanged(Vector2 size)
     {
-        Rect rect = _belt.MiddleWorldRect;
+        size.y *= _heightFactor;
 
-        Vector3 position = new Vector3(rect.xMin + rect.width * relativePosition, rect.center.y, 0.0f);
+        _draggableZone.SetSize(size);
 
-        figure.transform.position = position;
+        _view.SetSize(size.x, size.y);
+
+        SetupEdgePoints();
+    }
+
+    private void SetupEdgePoints()
+    {
+        Vector3 startPoint = _view.MiddleWorldRect.min + new Vector2(0.0f, _view.MiddleWorldRect.height / 2.0f);
+        Vector3 endPoint = startPoint + new Vector3(_view.MiddleWorldRect.width, 0.0f);
+
+        _draggableZone.SetEdgePoints(startPoint, endPoint);
     }
 
     public class Pool : MonoMemoryPool<SortingGameplayBelt> { }

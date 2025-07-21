@@ -14,10 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _states:
   - <Name>k__BackingField: Easy
-    <PlayerHealth>k__BackingField: 10
+    <PlayerHealth>k__BackingField: 100
     <SortWinCountMin>k__BackingField: 10
     <SortWinCountMax>k__BackingField: 20
     <SpawnTimeoutMin>k__BackingField: 1
     <SpawnTimeoutMax>k__BackingField: 2
-    <FigureVelocityMin>k__BackingField: 3.2
-    <FigureVelocityMax>k__BackingField: 3.2
+    <FigureVelocityMin>k__BackingField: 0.01
+    <FigureVelocityMax>k__BackingField: 0.1

@@ -3,11 +3,26 @@ using Zenject;
 
 public class TitleState : FSMState<TitleState.EnterData>, ISignalHandler
 {
-    public TitleState() : base(null) { }
+    private TitleStateView _view;
 
-    public override void Enter(EnterData enterData) { }
+    private SortingGameplay.LaunchParameters.IFactory _gameplayParamsFactory;
 
-    public override void Exit() { }
+    public TitleState(TitleStateView view, SortingGameplay.LaunchParameters.IFactory gameplayParamsFactory) : base(view)
+    {
+        _view = view;
+
+        _gameplayParamsFactory = gameplayParamsFactory;
+    }
+
+    public override void Enter(EnterData enterData) 
+    {
+        _view.Show();
+    }
+
+    public override void Exit()
+    {
+        _view.Hide();
+    }
 
     public override void FixedUpdate() { }
 
@@ -18,7 +33,14 @@ public class TitleState : FSMState<TitleState.EnterData>, ISignalHandler
         switch (data)
         {
             case MainFSMToGameplaySignalData toGameplayData:
-                Fsm.ChangeState(new GameplayState.EnterData(toGameplayData.LaunchParameters));
+                if (toGameplayData.LaunchParameters != null)
+                {
+                    Fsm.ChangeState(new GameplayState.EnterData(toGameplayData.LaunchParameters));
+                }
+                else
+                {
+                    Fsm.ChangeState(new GameplayState.EnterData(_gameplayParamsFactory.Create()));
+                }
                 break;
         }
     }

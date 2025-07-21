@@ -221,8 +221,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7682744badc754f4a915545caa3d46e5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _beltBorderThickness: 0.1
-  _beltVelocity: 2
+  _beltBorderThickness: 0.05
+  _beltVelocity: 1
   _beltTop: {fileID: 6851589136385447090}
   _beltMiddle: {fileID: 8363841767720513329}
   _beltBottom: {fileID: 9147194898824644814}

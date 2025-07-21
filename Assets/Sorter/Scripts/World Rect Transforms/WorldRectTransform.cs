@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class WorldRectTransform : MonoBehaviour
 {
-    public ReactiveProperty<Vector2> Size { get; private set; } = new(Vector2.one);
+    public ReactiveProperty<Vector2> Position { get; private set; } = new(Vector2.zero);
 
-    public ReactiveProperty<Vector3> Scale { get; private set; } = new(Vector3.one);
+    public ReactiveProperty<Vector2> Size { get; private set; } = new(Vector2.one);
 }

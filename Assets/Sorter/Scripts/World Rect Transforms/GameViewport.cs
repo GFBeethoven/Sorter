@@ -40,7 +40,7 @@ public class GameViewport : MonoBehaviour, IInitializable
     private IEnumerator<float> _CheckAspectChange()
     {
 #if UNITY_EDITOR
-        const float Period = 0.02f;
+        const float Period = 0.001f;
 #else
         const float Period = 0.25f;
 #endif

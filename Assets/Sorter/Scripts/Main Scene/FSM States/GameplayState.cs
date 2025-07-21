@@ -21,7 +21,10 @@ public class GameplayState : FSMState<GameplayState.EnterData>, ISignalHandler
 
     public override void FixedUpdate() { }
 
-    public override void Update() { }
+    public override void Update()
+    {
+        _sortingGameplay.Tick();
+    }
 
     void ISignalHandler.Handle(FSMSignalData data)
     {

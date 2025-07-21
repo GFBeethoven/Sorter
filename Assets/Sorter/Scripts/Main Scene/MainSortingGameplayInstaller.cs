@@ -18,6 +18,14 @@ public class MainSortingGameplayInstaller : MonoInstaller
         Container.BindMemoryPool<SortingGameplayFigureHole, SortingGameplayFigureHole.Pool>().WithInitialSize(6)
             .FromComponentInNewPrefab(_sortingGameplayFigureHole).UnderTransformGroup("Holes");
 
+        Container.Bind<SortingGameplay.LaunchParameters.IFactory>()
+            .To<SortingGameplay.LaunchParameters.RandomFactoryWithTaskConditions>()
+            .AsSingle();
+
+        Container.BindInterfacesAndSelfTo<SortingGameplayCanvas>().FromComponentInHierarchy(true).AsSingle();
+
         Container.Bind<SortingGameplay>().ToSelf().AsSingle();
+
+        Container.Bind<DraggablesDispatcher>().ToSelf().AsSingle();
     }
 }

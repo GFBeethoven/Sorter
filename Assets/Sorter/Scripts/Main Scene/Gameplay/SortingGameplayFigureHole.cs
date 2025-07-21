@@ -2,8 +2,12 @@ using UnityEngine;
 using Zenject;
 
 [RequireComponent(typeof(WorldRectTransform))]
-public class SortingGameplayFigureHole : DraggableDropZone<SortingGameplayFigure>
+public class SortingGameplayFigureHole : MonoBehaviour
 {
+    [SerializeField] private SortingGameplayFigureHoleDraggableZone _draggableZone;
+
+    [SerializeField] private FigureHole _view;
+
     private WorldRectTransform _rectTransform;
     public WorldRectTransform WorldRectTransform
     {
@@ -18,23 +22,42 @@ public class SortingGameplayFigureHole : DraggableDropZone<SortingGameplayFigure
         }
     }
 
+    public DraggableDropZone<SortingGameplayFigure> DraggableZone => _draggableZone;
+
     private FigureConfig.Data _targetFigure;
+    public FigureConfig.Data TargetFigure => _targetFigure;
+
+    private void OnEnable()
+    {
+        WorldRectTransform.Position.Subscribe(PositionChanged);
+        WorldRectTransform.Size.Subscribe(SizeChanged);
+    }
+
+    private void OnDisable()
+    {
+        WorldRectTransform.Position.Unsubscribe(PositionChanged);
+        WorldRectTransform.Size.Unsubscribe(SizeChanged);
+    }
 
     public void Setup(FigureConfig.Data targetFigure)
     {
         _targetFigure = targetFigure;
+
+        _draggableZone.Setup(targetFigure);
+
+        _view.Setup(targetFigure);
     }
 
-    protected override void OnAddItem(SortingGameplayFigure newItem)
+    private void PositionChanged(Vector2 position)
     {
-        newItem.CanDrag = false;
+        transform.position = position;
     }
 
-    protected override bool IsNewItemValid(SortingGameplayFigure draggable)
+    private void SizeChanged(Vector2 size)
     {
-        if (_targetFigure == null || draggable == null) return false;
+        _draggableZone.SetSize(size);
 
-        return _targetFigure.Id == draggable.FigureId;
+        _view.SetSize(size.x, size.y);
     }
 
     public class Pool : MonoMemoryPool<FigureConfig.Data, SortingGameplayFigureHole>

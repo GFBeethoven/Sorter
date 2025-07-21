@@ -14,10 +14,10 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   <LinesRect>k__BackingField:
     serializedVersion: 2
-    x: 0.1
-    y: 0.25
-    width: 0.9
-    height: 0.75
+    x: 0
+    y: 0.3
+    width: 1
+    height: 0.6
   <SlotsRect>k__BackingField:
     serializedVersion: 2
     x: 0.2

@@ -15,8 +15,8 @@ public class MainFSMInstaller : MonoInstaller
         Container.BindInterfacesAndSelfTo<WinState>().AsSingle();
         Container.BindInterfacesAndSelfTo<LoseState>().AsSingle();
 
-        Container.Bind<StateEnterData>().WithId(FSM.InitEnterDataId).To<TitleState.EnterData>().AsSingle();
-
         Container.Bind<FSM>().ToSelf().AsSingle();
+
+        Container.BindInterfacesAndSelfTo<MainFSMEntryPoint>().AsSingle();
     }
 }

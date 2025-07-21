@@ -17,7 +17,7 @@ public class Belt : MonoBehaviour
         {
             Vector2 size = _beltMiddle.size;
 
-            return new Rect((Vector2)transform.localPosition - size / 2.0f, size);
+            return new Rect((Vector2)transform.position - size / 2.0f, size);
         }
     }
 
@@ -34,11 +34,11 @@ public class Belt : MonoBehaviour
 
         MaterialPropertyBlock block = new MaterialPropertyBlock();
 
-        _beltBottom.GetPropertyBlock(block);
+        _beltMiddle.GetPropertyBlock(block);
 
         block.SetFloat(HorizontalOffsetVelocityProperty, _beltVelocity);
 
-        _beltBottom.SetPropertyBlock(block);
+        _beltMiddle.SetPropertyBlock(block);
 
         _isInitialized = true;
 

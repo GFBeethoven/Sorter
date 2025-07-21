@@ -16,6 +16,16 @@ public class WinStateView : FSMStateMono<WinState.EnterData>
         _state = (WinState)fsmState;
     }
 
+    public void Show()
+    {
+        gameObject.SetActive(true);
+    }
+
+    public void Hide()
+    {
+        gameObject.SetActive(false);
+    }
+
     public void RefreshInfo()
     {
         _health.text = _state.Health.ToString();

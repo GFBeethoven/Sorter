@@ -1333,7 +1333,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: New Text
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: e919fbc5c716d9749b8a9377debc1d31, type: 2}
   m_sharedMaterial: {fileID: -2064269837921644696, guid: e919fbc5c716d9749b8a9377debc1d31, type: 2}
@@ -1787,8 +1787,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _sortingGameplayFigure: {fileID: 5349861136601759394, guid: a63852969f7917145bad8ddd809459f2, type: 3}
-  _sortingGameplayBelt: {fileID: 6884446810988220801, guid: 9a30a1074fe6efc41a332c98755fea8e, type: 3}
-  _sortingGameplayFigureHole: {fileID: 8802694140290479845, guid: 140b0f590e7a11943aeed4bbf2417cbb, type: 3}
+  _sortingGameplayBelt: {fileID: 3497301545641760868, guid: 9a30a1074fe6efc41a332c98755fea8e, type: 3}
+  _sortingGameplayFigureHole: {fileID: 6906607924817072501, guid: 47cc3ddfcdf0064479a53ff6c68bed4a, type: 3}
 --- !u!1 &1433738547
 GameObject:
   m_ObjectHideFlags: 0
@@ -1846,7 +1846,7 @@ MonoBehaviour:
   m_OnCullStateChanged:
     m_PersistentCalls:
       m_Calls: []
-  m_text: New Text
+  m_text: 
   m_isRightToLeft: 0
   m_fontAsset: {fileID: 11400000, guid: e919fbc5c716d9749b8a9377debc1d31, type: 2}
   m_sharedMaterial: {fileID: -2064269837921644696, guid: e919fbc5c716d9749b8a9377debc1d31, type: 2}

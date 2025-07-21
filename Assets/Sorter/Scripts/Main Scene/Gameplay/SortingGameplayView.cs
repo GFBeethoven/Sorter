@@ -21,6 +21,16 @@ public class SortingGameplayView : FSMStateMono<GameplayState.EnterData>
         _holesGroup.Direction = LineWorldLayoutGroup.Axis.Horizontal;
     }
 
+    public void Show()
+    {
+        gameObject.SetActive(true);
+    }
+
+    public void Hide()
+    {
+        gameObject.SetActive(false);
+    }
+
     public void UpdateView(GameplayLayoutConfig layout, IEnumerable<SortingGameplayBelt> belts, 
         IEnumerable<SortingGameplayFigureHole> holes)
     {

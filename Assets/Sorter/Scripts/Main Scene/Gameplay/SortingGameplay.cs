@@ -10,6 +10,8 @@ public class SortingGameplay
     private SortingGameplayBelt.Pool _beltPool;
     private SortingGameplayFigureHole.Pool _holePool;
 
+    private SortingGameplayView _view;
+
     private ReactiveProperty<int> _health;
     private ReactiveProperty<int> _score;
 
@@ -17,18 +19,24 @@ public class SortingGameplay
     private List<SortingGameplayFigure> _figures;
     private List<SortingGameplayFigureHole> _holes;
 
+    private DraggablesDispatcher _draggablesDispatcher;
+
     private bool _isLaunched;
 
     private LaunchParameters _parameters;
 
     private CoroutineHandle _figureSpawnCoroutine;
 
-    public SortingGameplay(SignalBus signalBus, SortingGameplayFigure.Pool figurePool, SortingGameplayBelt.Pool beltPool, SortingGameplayFigureHole.Pool holePool)
+    public SortingGameplay(SignalBus signalBus, SortingGameplayFigure.Pool figurePool, 
+        SortingGameplayBelt.Pool beltPool, SortingGameplayFigureHole.Pool holePool, SortingGameplayView view,
+        DraggablesDispatcher draggablesDispatcher)
     {
         _signalBus = signalBus;
         _figurePool = figurePool;
         _beltPool = beltPool;
         _holePool = holePool;
+        _view = view;
+        _draggablesDispatcher = draggablesDispatcher;
 
         _health = new ReactiveProperty<int>(0);
         _score = new ReactiveProperty<int>(0);
@@ -49,11 +57,26 @@ public class SortingGameplay
         _health.Value = parameters.Health;
         _score.Value = 0;
 
+        _signalBus.Subscribe<SortingGameplayFigureSorted>(FigureSorted);
+        _signalBus.Subscribe<SortingGameplayFigureDestroyed>(FigureDestroyed);
+
         _health.Subscribe(HealthChanged);
         _score.Subscribe(ScoreChanged);
 
-        _signalBus.Subscribe<SortingGameplayFigureSorted>(FigureSorted);
-        _signalBus.Subscribe<SortingGameplayFigureDestroyed>(FigureDestroyed);
+        for (int i = 0; i < _parameters.BeltLineCount; i++)
+        {
+            _belts.Add(GetBelt());
+        }
+
+        for (int i = 0; i < _parameters.AllFigures.Length; i++)
+        {
+            _holes.Add(GetHole(_parameters.AllFigures[i]));
+        }
+
+        _view.Show();
+        _view.UpdateView(_parameters.Layout, _belts, _holes);
+
+        _draggablesDispatcher.Launch();
 
         if (_figureSpawnCoroutine.IsValid)
         {
@@ -74,6 +97,8 @@ public class SortingGameplay
 
         _signalBus.TryUnsubscribe<SortingGameplayFigureSorted>(FigureSorted);
         _signalBus.TryUnsubscribe<SortingGameplayFigureDestroyed>(FigureDestroyed);
+
+        _view.Hide();
 
         for (int i = 0; i < _figures.Count; i++)
         {
@@ -96,12 +121,14 @@ public class SortingGameplay
 
         _holes.Clear();
 
+        _draggablesDispatcher.Stop();
+
         Timing.KillCoroutines(_figureSpawnCoroutine);
     }
 
     public void Tick()
     {
-        if (!_isLaunched) return;
+        _draggablesDispatcher.Update();
 
         for (int i = 0; i < _belts.Count; i++)
         {
@@ -111,6 +138,8 @@ public class SortingGameplay
 
     private void HealthChanged(int health)
     {
+        _signalBus.Fire(new SortingGameplayHealthChanged(health));  
+
         if (health <= 0)
         {
             _signalBus.Fire(new FSMSignal(new MainFSMLoseSignalData(_score.Value, _parameters.SortWinCount)));
@@ -119,6 +148,8 @@ public class SortingGameplay
 
     private void ScoreChanged(int score)
     {
+        _signalBus.Fire(new SortingGameplayScoreChanged(score));
+
         if (score >= _parameters.SortWinCount)
         {
             _signalBus.Fire(new FSMSignal(new MainFSMWinSignalData(_health.Value, _score.Value, 
@@ -142,9 +173,10 @@ public class SortingGameplay
         _health.Value--;
     }
 
-    private SortingGameplayFigure GetRandomFigure(FigureConfig.Data figureData, SortingGameplayBelt belt, float relativeVelocity)
+    private SortingGameplayFigure GetRandomFigure(FigureConfig.Data figureData, SortingGameplayBelt belt, 
+        SortingGameplayFigureHole targetHole, float relativeVelocity)
     {
-        return _figurePool.Spawn(figureData, belt, relativeVelocity);
+        return _figurePool.Spawn(figureData, belt, targetHole, relativeVelocity);
     }
 
     private SortingGameplayBelt GetBelt()
@@ -159,6 +191,8 @@ public class SortingGameplay
 
     private void ReleaseFigure(SortingGameplayFigure figure)
     {
+        figure.Dispose();
+
         _figurePool.Despawn(figure);
     }
 
@@ -186,9 +220,22 @@ public class SortingGameplay
 
             var relativeVelocity = _parameters.GameplayConfig.RandomFigureVelocity;
 
-            var newFigure = GetRandomFigure(figureData, belt, relativeVelocity);
+            var newFigure = GetRandomFigure(figureData, belt, GetHoleByFigureData(figureData), relativeVelocity);
 
             _figures.Add(newFigure);
+        }
+
+        SortingGameplayFigureHole GetHoleByFigureData(FigureConfig.Data data)
+        {
+            for (int i = 0; i < _holes.Count; i++)
+            {
+                if (_holes[i].TargetFigure == data)
+                {
+                    return _holes[i];
+                }
+            }
+
+            return null;
         }
     }
 
@@ -205,5 +252,49 @@ public class SortingGameplay
         public int BeltLineCount { get; }
 
         public FigureConfig.Data[] AllFigures { get; }
+
+        private LaunchParameters(GameplayLayoutConfig layout, GameplayConfig.State gameplayConfig, int health, int sortWinCount, int beltLineCount, FigureConfig.Data[] allFigures)
+        {
+            Layout = layout;
+            GameplayConfig = gameplayConfig;
+            Health = health;
+            SortWinCount = sortWinCount;
+            BeltLineCount = beltLineCount;
+            AllFigures = allFigures;
+        }
+
+        public interface IFactory
+        {
+            public LaunchParameters Create();
+        }
+
+        public class RandomFactoryWithTaskConditions : IFactory
+        {
+            private GameplayLayoutConfig _layoutConfig;
+            private GameplayConfig _gameplayConfig;
+            private FigureConfig _figures;
+            
+            public RandomFactoryWithTaskConditions(GameplayLayoutConfig layoutConfig, GameplayConfig gameplayConfig, 
+                FigureConfig figures)
+            {
+                _layoutConfig = layoutConfig;
+                _gameplayConfig = gameplayConfig;
+                _figures = figures;
+            }
+
+            public LaunchParameters Create()
+            {
+                var randomState = _gameplayConfig.GetState(Random.Range(0, _gameplayConfig.StateCount));
+
+                FigureConfig.Data[] figures = new FigureConfig.Data[4];
+                for (int i = 0; i < figures.Length; i++) 
+                {
+                    figures[i] = _figures.GetData(i);
+                }
+
+                return new LaunchParameters(_layoutConfig, randomState, randomState.PlayerHealth,
+                    randomState.RandomSortWinCount, 3, figures);
+            }
+        }
     }
 }

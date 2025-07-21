@@ -52,7 +52,7 @@ public class DraggablesDispatcher
 
     public void Update()
     {
-        if (Touchscreen.current == null)
+        if (Touchscreen.current == null || !_isLaunched)
             return;
 
         var touchArray = Touchscreen.current.touches;
@@ -61,13 +61,13 @@ public class DraggablesDispatcher
         {
             var touch = touchArray[i];
 
-            if (!touch.press.isPressed)
+            var phase = touch.phase.ReadValue();
+
+            if (phase == UnityEngine.InputSystem.TouchPhase.None)
                 continue;
 
             int touchId = touch.touchId.ReadValue();
             Vector2 touchPos = touch.position.ReadValue();
-
-            var phase = touch.phase.ReadValue();
 
             switch (phase)
             {
@@ -106,15 +106,19 @@ public class DraggablesDispatcher
         if (_draggedObjects.ContainsKey(pointerId))
             return;
 
-        Ray ray = _camera.ScreenPointToRay(screenPos);
+        Vector2 pos = _camera.ScreenToWorldPoint(screenPos);
 
-        if (Physics.Raycast(ray, out RaycastHit hit, 1000.0f, DraggablesLayerMask, QueryTriggerInteraction.Collide))
+        Collider2D hit = Physics2D.OverlapPoint(pos, DraggablesLayerMask);
+
+        if (hit != null)
         {
-            var draggable = hit.collider.GetComponent<IDraggable>();
+            var draggable = hit.gameObject.GetComponent<IDraggable>();
 
-            if (_activeDraggables.ContainsKey(draggable) == false)
+            if (_activeDraggables.ContainsKey(draggable) == false && draggable.CanDrag)
             {
-                draggable.DragStart(hit.point);
+                draggable.DropOwnerOnDragStart();
+
+                draggable.DragStart(pos);
 
                 _draggedObjects[pointerId] = draggable;
 
@@ -129,7 +133,7 @@ public class DraggablesDispatcher
     {
         if (_draggedObjects.TryGetValue(pointerId, out var draggable))
         {
-            Vector3 worldPos = _camera.ScreenToWorldPoint(new Vector3(screenPos.x, screenPos.y, 0.0f));
+            Vector2 worldPos = _camera.ScreenToWorldPoint(screenPos);
 
             draggable.Drag(worldPos);
 
@@ -143,22 +147,41 @@ public class DraggablesDispatcher
         {
             _pointerPositions[pointerId] = screenPos;
 
-            Vector3 worldPos = _camera.ScreenToWorldPoint(new Vector3(screenPos.x, screenPos.y, 0.0f));
+            Vector2 worldPos = _camera.ScreenToWorldPoint(screenPos);
 
             draggable.DragEnd(worldPos);
 
-            Ray ray = _camera.ScreenPointToRay(screenPos);
+            Vector2 pos = _camera.ScreenToWorldPoint(screenPos);
 
-            if (Physics.Raycast(ray, out RaycastHit hit, 1000.0f, DraggableDropZonesLayerMask, QueryTriggerInteraction.Collide))
+            Collider2D hit = Physics2D.OverlapPoint(pos, DraggableDropZonesLayerMask);
+
+            Debug.Log("End drag");
+
+            if (hit != null)
             {
-                draggable.SetOwner(hit.collider.gameObject.GetComponent<IDraggableDropZone>());
+                Debug.Log(hit.gameObject);
+
+                IDraggableDropZone dropZone = hit.gameObject.GetComponent<IDraggableDropZone>();
+
+                if (dropZone != null && dropZone.IsNewItemValid(draggable))
+                {
+                    draggable.SetOwnerOnDrop(dropZone);
+                }
+                else
+                {
+                    draggable.SetOwnerOnDrop(null);
+                }
             }
+            else
+            {
+                draggable.SetOwnerOnDrop(null);
+            }
+
+            _draggedObjects.Remove(pointerId);
+
+            _activeDraggables.Remove(draggable);
+
+            _pointerPositions.Remove(pointerId);
         }
-
-        _draggedObjects.Remove(pointerId);
-
-        _activeDraggables.Remove(draggable);
-
-        _pointerPositions.Remove(pointerId);
     }
 }

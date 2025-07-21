@@ -18,6 +18,8 @@ public class SharedGameObjectsInstaller : MonoInstaller
         Container.Bind<Camera>().FromInstance(camera).AsSingle();
         Container.Bind<GameViewport>().FromInstance(viewport).AsSingle();
 
+        Container.Bind<IInitializable>().FromInstance(viewport);
+
         Container.QueueForInject(viewport);
     }
 }

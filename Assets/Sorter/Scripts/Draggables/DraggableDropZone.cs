@@ -90,7 +90,7 @@ public abstract class DraggableDropZone<T> : MonoBehaviour, IDraggableDropZone w
         }
     }
 
-    bool IDraggableDropZone.TryAddItem(IDraggableReadOnly draggable)
+    void IDraggableDropZone.TryAddItem(IDraggableReadOnly draggable)
     {
         if (draggable is T monoDraggable && !_draggablesHashSet.Contains(monoDraggable) &&
             IsNewItemValid(monoDraggable))
@@ -99,11 +99,7 @@ public abstract class DraggableDropZone<T> : MonoBehaviour, IDraggableDropZone w
             _draggablesHashSet.Add(monoDraggable);
 
             OnAddItem(monoDraggable);
-
-            return true;
         }
-
-        return false;
     }
 
     void IDraggableDropZone.RemoveItem(IDraggableReadOnly draggable)
@@ -116,11 +112,23 @@ public abstract class DraggableDropZone<T> : MonoBehaviour, IDraggableDropZone w
             OnRemoveItem(monoDraggable);
         }
     }
+
+    bool IDraggableDropZone.IsNewItemValid(IDraggableReadOnly draggable)
+    {
+        if (draggable is T monoDraggable)
+        {
+            return IsNewItemValid(monoDraggable);
+        }
+
+        return false;
+    }
 }
 
 public interface IDraggableDropZone : IDisposable
 {
-    public bool TryAddItem(IDraggableReadOnly draggable);
+    public void TryAddItem(IDraggableReadOnly draggable);
 
     public void RemoveItem(IDraggableReadOnly draggable);
+
+    public bool IsNewItemValid(IDraggableReadOnly draggable);
 }

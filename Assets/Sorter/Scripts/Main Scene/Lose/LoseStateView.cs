@@ -15,6 +15,16 @@ public class LoseStateView : FSMStateMono<LoseState.EnterData>
         _state = (LoseState)fsmState;
     }
 
+    public void Show() 
+    {
+        gameObject.SetActive(true);
+    }
+
+    public void Hide()
+    {
+        gameObject.SetActive(false);
+    }
+
     public void RefreshInfo()
     {
         _score.text = _state.Score.ToString();

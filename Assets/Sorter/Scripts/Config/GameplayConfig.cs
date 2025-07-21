@@ -32,8 +32,8 @@ public class GameplayConfig : ScriptableObject
         private const float SpawnTimeoutRangeMin = 0.0f;
         private const float SpawnTimeoutRangeMax = 50.0f;
 
-        private const float FigureVelocityRangeMin = 0.01f;
-        private const float FigureVelocityRangeMax = 50.0f;
+        private const float FigureVelocityRangeMin = 0.001f;
+        private const float FigureVelocityRangeMax = 1.5f;
 
         [field: SerializeField] public string Name { get; private set; }
 

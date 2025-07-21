@@ -113,47 +113,31 @@ public class LineWorldLayoutGroup : MonoBehaviour
 
         _anchorWorldPositions.Recalculate();
 
-        float cellSize = 0.0f;
-        Vector3 position = Vector3.zero;
-        Vector3 direction = Vector3.zero;
+        Vector2 position = Vector2.zero;
+        Vector2 size = Vector2.zero;
+        Vector2 direction = Vector2.zero;
 
         if (_axis == Axis.Horizontal)
         {
-            cellSize = Mathf.Min(_anchorWorldPositions.AreaSize.x / Children.Count, _anchorWorldPositions.AreaSize.y);
-            position = _anchorWorldPositions.LBWorldPosition + new Vector3(cellSize, cellSize, 0.0f) / 2.0f;
-            direction = new Vector3(cellSize, 0.0f);
+            size = _anchorWorldPositions.AreaSize;
+            size.x /= Children.Count;
+            position = (Vector2)_anchorWorldPositions.LBWorldPosition + size / 2.0f;
+            direction = new Vector2(size.x, 0.0f);
         }
         else if (_axis == Axis.Vertical)
         {
-            cellSize = Mathf.Min(_anchorWorldPositions.AreaSize.x, _anchorWorldPositions.AreaSize.y / Children.Count);
-            position = _anchorWorldPositions.RTWorldPosition - new Vector3(cellSize, cellSize, 0.0f) / 2.0f;
-            direction = new Vector3(0.0f, -cellSize);
+            size = _anchorWorldPositions.AreaSize;
+            size.y /= Children.Count;
+            position = (Vector2)_anchorWorldPositions.RTWorldPosition - size / 2.0f;
+            direction = new Vector2(0.0f, -size.y);
         }
-
-        float minScale = float.MaxValue;
-
-        for (int i = 0; i < Children.Count; i++)
-        {
-            Vector2 size = Children[i].Size.Value;
-
-            if (Mathf.Approximately(size.x, 0.0f) || Mathf.Approximately(size.y, 0.0f)) continue;
-
-            float scale = cellSize / Mathf.Max(size.x, size.y);
-
-            if (scale < minScale)
-            {
-                minScale = scale;
-            }
-        }
-
-        Vector3 scale3 = new Vector3(minScale, minScale, 1.0f);
 
         for (int i = 0; i < Children.Count; i++)
         {
             var child = Children[i];
 
-            child.Scale.Value = scale3;
-            child.transform.localPosition = position;
+            child.Position.Value = position;
+            child.Size.Value = size;
 
             position += direction;
         }
